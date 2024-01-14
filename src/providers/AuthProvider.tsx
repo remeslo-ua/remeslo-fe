@@ -37,7 +37,6 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (storedUser) {
       if (state.user?.uid !== storedUser.uid) {
         dispatch({ type: 'SET_USER', payload: storedUser });
-        router.push('/');
       }
     } else {
       router.push('/login');

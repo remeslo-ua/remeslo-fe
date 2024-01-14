@@ -20,7 +20,7 @@ export const PrimaryButton: React.FC<Props> = ({
   styles,
   isDisabled = false,
   errorMessage,
-  color = 'orange-500',
+  color = 'bg-orange-400',
   icon,
   btnContainerStyles,
   type = 'submit',
@@ -28,7 +28,7 @@ export const PrimaryButton: React.FC<Props> = ({
 }) => (
   <div className={btnContainerStyles}>
     <Button
-      className={`bg-${color} text-white font-bold ${styles} ${
+      className={`${color} text-white font-bold ${styles} ${
         isDisabled && 'bg-[#B8B9B8] text-[#656766]'
       }`}
       type={type}

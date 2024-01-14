@@ -49,7 +49,6 @@ export const Login = () => {
 					({ name, label, id, type, autocomplete, validation }) => (
 						<PrimaryInput
 							key={id}
-							id={id}
 							name={name}
 							label={label}
 							type={type}

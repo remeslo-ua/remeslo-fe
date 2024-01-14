@@ -18,7 +18,7 @@ export default function Home() {
 				</div>
 			) : (
 				<div>
-					<Nav />
+					<h1 className="flex justify-center">HOME</h1>
 				</div>
 			)}
 		</main>
