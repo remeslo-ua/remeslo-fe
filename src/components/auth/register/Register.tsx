@@ -45,7 +45,6 @@ export const Register = () => {
 					{regInputs.map(({ name, label, id, type, validation }) => (
 						<PrimaryInput
               key={id}
-              id={id}
               name={name}
               label={label}
               type={type}

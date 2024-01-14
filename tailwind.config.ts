@@ -289,7 +289,7 @@ const config: Config = {
           dark: '#dddddd',
         },
         common: {
-          background: '#FFFBFF',
+          background: '#ffffff',
           surface: '#fff8f5',
           surfaceVariant: '#f2dfd1',
         },
