@@ -1,6 +1,6 @@
 "use client";
 
-import "../../../api/auth/firebase";
+import "../../../firebase/firebase";
 import { logInputs } from "./inputs";
 import { useForm } from "react-hook-form";
 import { PrimaryButton } from "@/components/common/primary/PrimaryButton";

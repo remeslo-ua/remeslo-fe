@@ -1,7 +1,7 @@
 "use client";
 
 import { registerUser } from "@/api/auth/register";
-import "../../../api/auth/firebase";
+import "../../../firebase/firebase";
 import { useForm } from "react-hook-form";
 import { regInputs } from "./inputs";
 import { PrimaryButton } from "@/components/common/primary/PrimaryButton";

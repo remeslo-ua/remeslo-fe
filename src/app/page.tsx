@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthContext } from "@/providers/AuthProvider";
-import "../api/auth/firebase";
+import "../firebase/firebase";
 import { PrimaryButton } from "@/components/common/primary/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";

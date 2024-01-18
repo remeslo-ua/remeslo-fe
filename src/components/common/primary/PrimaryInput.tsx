@@ -1,4 +1,4 @@
-import { Input, autocomplete } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 
 interface Props {
 	name: string;
@@ -23,10 +23,11 @@ export const PrimaryInput: React.FC<Props> = ({
 		<div className='mb-5'>
 			<Input
 				{...register(name, validation)}
+				variant='bordered'
+				labelPlacement='inside'
 				label={label}
 				width='100%'
 				type={type}
-				autoComplete={autocomplete}
 				errorMessage={errors[name] && errors[name]?.message}
 				classNames={{
 					inputWrapper: [
