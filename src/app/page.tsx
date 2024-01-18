@@ -9,18 +9,17 @@ import { Nav } from "@/components/nav/Nav";
 
 export default function Home() {
 	const { state } = useAuthContext();
+	const { isLoading } = state;
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
 	
 	return (
 		<main className="h-[100vh]">
-			{!state.user ? (
-				<div>
-					<h1>You have to login first!</h1>
-				</div>
-			) : (
-				<div>
-					<h1 className="flex justify-center">HOME</h1>
-				</div>
-			)}
+			<div>
+				<h1 className="flex justify-center">HOME</h1>
+			</div>
 		</main>
 	);
 }

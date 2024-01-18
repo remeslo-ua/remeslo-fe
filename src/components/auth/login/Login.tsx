@@ -6,11 +6,8 @@ import { useForm } from "react-hook-form";
 import { PrimaryButton } from "@/components/common/primary/PrimaryButton";
 import { PrimaryInput } from "@/components/common/primary/PrimaryInput";
 import { loginUser } from "@/api/auth/login";
-import { useAuthContext } from "@/providers/AuthProvider";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ResStatus } from "@/constants/apiStatus/resStatus";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { useLoginLogout } from "@/hooks/useLoginLogout";
 
 interface logFormInputs {
 	email: string;
@@ -18,6 +15,8 @@ interface logFormInputs {
 }
 
 export const Login = () => {
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
 	const {
 		register,
 		handleSubmit,
@@ -29,14 +28,11 @@ export const Login = () => {
 		},
 	});
 
-	const { login } = useLoginLogout();
-
 	const onSubmit = async ({ email, password }: logFormInputs) => {
-		const res = await loginUser(email, password);
-		
-		if (res.status === ResStatus.SUCCESS) {
-			login(res)
-		}
+		setIsLoading(true);
+		await loginUser(email, password);
+		router.push('/')
+		setIsLoading(false);
 	};
 
 	return (
@@ -59,7 +55,7 @@ export const Login = () => {
 						/>
 					)
 				)}
-				<PrimaryButton text='Login' />
+				<PrimaryButton text='Login' isLoading={isLoading}/>
 			</form>
 		</div>
 	);

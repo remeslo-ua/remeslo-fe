@@ -1,17 +1,16 @@
 "use client";
-
 import { PrimaryInput } from "@/components/common/primary/PrimaryInput";
 import { profileInputs } from "./ProfileInputs";
 import { useForm } from "react-hook-form";
 import { PrimaryButton } from "@/components/common/primary/PrimaryButton";
 import { updateProfile } from "firebase/auth";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { ProfileFormFields } from "@/types/ProfileFormFields";
-import { set } from "firebase/database";
+import { auth } from "@/firebase/firebase";
 
 export const ProfileForm = () => {
-	const { user } = useAuthContext().state;
+	const { currentUser } = auth;
 	const {
 		register,
 		getValues,
@@ -19,39 +18,38 @@ export const ProfileForm = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<ProfileFormFields>({
-    defaultValues: {
-      name: user?.displayName || 'null',
-    },
-  });
+		defaultValues: {
+			name: currentUser?.displayName || 'null',
+		},
+	});
 
 	const onSubmit = (data: any) => {
-		if (user === null) {
+		if (currentUser === null) {
 			console.log("user is null");
 			return;
 		}
 
-		console.log(data);
+		// console.log(data);
 
-		updateProfile(user, {
+		updateProfile(currentUser, {
 			displayName: data.name,
-			photoURL: data.imgUrl,
 		})
 			.then(() => {
 				console.log("Profile updated");
 			})
 			.catch(error => {
-				console.log(error);
+				console.log('error profile', error);
 			});
 	};
 
-  useEffect(() => {
-    if (user && user.displayName) {
-      setValue('name', user.displayName);
-    }
-    console.log(getValues());
-  }, [user?.displayName, user]);
-	
-  
+	useEffect(() => {
+		if (currentUser && currentUser.displayName) {
+			console.log(currentUser.displayName);
+			setValue('name', currentUser.displayName);
+		}
+	}, [currentUser?.displayName, currentUser]);
+
+
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
 			{profileInputs.map(({ name, label, type, validation }) => (
