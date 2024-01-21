@@ -1,5 +1,8 @@
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
+import { auth } from "../firebase/firebase";
+import { signOut } from "firebase/auth";
+import toast from "react-hot-toast";
 
 export const useLoginLogout = () => {
 	const { dispatch } = useAuthContext();
@@ -11,8 +14,12 @@ export const useLoginLogout = () => {
   };
 
   const logout = () => {
-    
-    router.push("/login");
+    signOut(auth).then(() => {
+      toast.success('signed out successfully')
+      router.push("for guests");
+    }).catch((error) => {
+      toast.error(error.message);
+    });
   };
 
   return { login, logout };

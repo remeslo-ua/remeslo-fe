@@ -1,6 +1,5 @@
 'use client';
 import { auth } from '@/firebase/firebase';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useReducer, useContext, ReactNode, Dispatch, useEffect } from 'react';
@@ -43,12 +42,13 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (state.user === null) {
         dispatch({ type: 'SET_USER', payload: user });
       }
-      if (state.isLoading) {
-        dispatch({ type: 'SET_LOADING', payload: false });
-      }
     } else {
-      router.push('/login');
+      router.push('for-guests');
       console.warn('User is signed out');
+    }
+
+    if (state.isLoading) {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   });
 
