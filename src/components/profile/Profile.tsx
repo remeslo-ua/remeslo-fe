@@ -15,7 +15,7 @@ export const Profile = () => {
   const { displayName } = currentUser;
 
   return (
-    <div className="h-[100vh] m-5 flex flex-col gap-5">
+    <div className="m-5 flex flex-col gap-5">
       <div>
         <div>{displayName}</div>
         <div>Here is your Remeslo Profile</div>

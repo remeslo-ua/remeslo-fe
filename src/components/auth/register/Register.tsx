@@ -10,52 +10,54 @@ import { useRouter } from "next/navigation";
 import { ResStatus } from "@/constants/apiStatus/resStatus";
 
 interface regFormInputs {
-	email: string;
-	password: string;
-	passwordConfirm: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
 }
 
 export const Register = () => {
-	const router = useRouter();
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<regFormInputs>({
-		defaultValues: {
-			email: "",
-			password: "",
-			passwordConfirm: "",
-		},
-	});
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<regFormInputs>({
+    defaultValues: {
+      email: "",
+      password: "",
+      passwordConfirm: "",
+    },
+  });
 
-	const onSubmit = async ({email, password}: regFormInputs) => {
-		const regRes = await registerUser(email, password);
-		
-		if (regRes.status === ResStatus.SUCCESS) {
-			localStorage.setItem("user", JSON.stringify(regRes));
-			router.push("/");
-		}
-	};
+  const onSubmit = async ({ email, password }: regFormInputs) => {
+    const regRes = await registerUser(email, password);
 
-	return (
-		<div className='flex justify-end h-[100vh]'>
-			<div className='w-[50vw] flex flex-col gap-3 p-5 justify-center'>
-				<form onSubmit={handleSubmit(onSubmit)}>
-					{regInputs.map(({ name, label, id, type, validation }) => (
-						<PrimaryInput
+    if (regRes.status === ResStatus.SUCCESS) {
+      router.push("/");
+    }
+  };
+
+  return (
+    <div className="flex justify-end h-[100vh]">
+      <div className="w-[50vw] flex flex-col gap-3 p-5 justify-center">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {regInputs.map(({ name, label, id, type, validation }) => (
+            <PrimaryInput
               key={id}
               name={name}
               label={label}
               type={type}
               register={register}
-							validation={validation}
-							errors={errors}
+              validation={validation}
+              errors={errors}
             />
-					))}
-					<PrimaryButton text="Register" isDisabled={!!errors.passwordConfirm} /> 
-				</form>
-			</div>
-		</div>
-	);
+          ))}
+          <PrimaryButton
+            text="Register"
+            isDisabled={!!errors.passwordConfirm}
+          />
+        </form>
+      </div>
+    </div>
+  );
 };

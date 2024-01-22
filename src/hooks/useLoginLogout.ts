@@ -10,12 +10,14 @@ export const useLoginLogout = () => {
 
   const login = (user: any) => {
     dispatch({ type: "SET_USER", payload: user });
+    toast.success('Logged in successfully')
     router.push("/");
   };
 
   const logout = () => {
     signOut(auth).then(() => {
-      toast.success('signed out successfully')
+      dispatch({ type: "SET_USER", payload: null });
+      toast.success('Signed out successfully')
       router.push("for guests");
     }).catch((error) => {
       toast.error(error.message);
