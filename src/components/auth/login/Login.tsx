@@ -1,62 +1,66 @@
 "use client";
 
-import "../../../firebase/firebase";
+import "../../../api/auth/firebase";
 import { logInputs } from "./inputs";
 import { useForm } from "react-hook-form";
 import { PrimaryButton } from "@/components/common/primary/PrimaryButton";
 import { PrimaryInput } from "@/components/common/primary/PrimaryInput";
 import { loginUser } from "@/api/auth/login";
-import { useState } from "react";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
+import { ResStatus } from "@/constants/apiStatus/resStatus";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useLoginLogout } from "@/hooks/useLoginLogout";
 
 interface logFormInputs {
-  email: string;
-  password: string;
+	email: string;
+	password: string;
 }
 
 export const Login = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<logFormInputs>({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<logFormInputs>({
+		defaultValues: {
+			email: "",
+			password: "",
+		},
+	});
 
-  const onSubmit = async ({ email, password }: logFormInputs) => {
-    setIsLoading(true);
-    await loginUser(email, password);
-    router.push("/");
-    setIsLoading(false);
-  };
+	const { login } = useLoginLogout();
 
-  return (
-    <div className="flex justify-end h-[100vh]">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-[50vw] flex flex-col gap-3 p-5 justify-center"
-      >
-        {logInputs.map(
-          ({ name, label, id, type, autocomplete, validation }) => (
-            <PrimaryInput
-              key={id}
-              name={name}
-              label={label}
-              type={type}
-              register={register}
-              autocomplete={autocomplete}
-              validation={validation}
-              errors={errors}
-            />
-          )
-        )}
-        <PrimaryButton text="Login" isLoading={isLoading} />
-      </form>
-    </div>
-  );
+	const onSubmit = async ({ email, password }: logFormInputs) => {
+		const res = await loginUser(email, password);
+		
+		if (res.status === ResStatus.SUCCESS) {
+			login(res)
+		}
+	};
+
+	return (
+		<div className='flex justify-end h-[100vh]'>
+			<form
+				onSubmit={handleSubmit(onSubmit)}
+				className='w-[50vw] flex flex-col gap-3 p-5 justify-center'
+			>
+				{logInputs.map(
+					({ name, label, id, type, autocomplete, validation }) => (
+						<PrimaryInput
+							key={id}
+							name={name}
+							label={label}
+							type={type}
+							register={register}
+							autocomplete={autocomplete}
+							validation={validation}
+							errors={errors}
+						/>
+					)
+				)}
+				<PrimaryButton text='Login' />
+			</form>
+		</div>
+	);
 };

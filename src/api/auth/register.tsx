@@ -1,9 +1,11 @@
+import { CustomToast } from "@/components/common/toast/CustomToast";
 import { ResStatus } from "@/constants/apiStatus/resStatus";
-import { auth } from "@/firebase/firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import toast from "react-hot-toast";
 
+
 export const registerUser = async(email: string, password: string) => {
+  const auth = getAuth();
   const user = await createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;

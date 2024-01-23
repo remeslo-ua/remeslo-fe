@@ -1,19 +1,17 @@
 'use client';
-import { auth } from '@/firebase/firebase';
-import { User, onAuthStateChanged } from 'firebase/auth';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useReducer, useContext, ReactNode, Dispatch, useEffect } from 'react';
 
 type State = {
   user: User | null; 
-  isLoading: boolean;
 };
 
 type Action = { type: string; payload?: any };
 
 const initialState: State = {
   user: null,
-  isLoading: true,
 };
 
 const AuthContext = createContext<{ state: State; dispatch: Dispatch<Action> } | undefined>(undefined);
@@ -27,34 +25,23 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           ...state,
           user: action.payload,
         };
-      case 'SET_LOADING':
-        return {
-          ...state,
-          isLoading: action.payload,
-        };
-      default:
-        return state;
-    }
-  }, initialState);
+        default:
+          return state;
+        }
+      }, initialState);
       
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      if (state.user === null) {
-        dispatch({ type: 'SET_USER', payload: user });
+      const { LSItem } = useLocalStorage('user');
+      const storedUser = LSItem ? JSON.parse(LSItem) : null;
+
+  useEffect(() => {
+    if (storedUser) {
+      if (state.user?.uid !== storedUser.uid) {
+        dispatch({ type: 'SET_USER', payload: storedUser });
       }
     } else {
-      router.push('for-guests');
-      console.warn('User is signed out');
+      router.push('/login');
     }
-
-    if (state.isLoading) {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
-  });
-
-  if (state.isLoading) {
-    return <div className='h-[100vh] flex justify-center'>Loading...</div>;
-  }
+  }, [state.user, router, storedUser]);
 
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
