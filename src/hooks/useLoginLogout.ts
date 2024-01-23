@@ -1,27 +1,21 @@
 import { useRouter } from "next/navigation";
+import { useLocalStorage } from "./useLocalStorage";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { auth } from "../firebase/firebase";
-import { signOut } from "firebase/auth";
-import toast from "react-hot-toast";
 
 export const useLoginLogout = () => {
+  const { setLSItem, removeLSItem } = useLocalStorage("user");
 	const { dispatch } = useAuthContext();
   const router = useRouter();
 
   const login = (user: any) => {
     dispatch({ type: "SET_USER", payload: user });
-    toast.success('Logged in successfully')
+    setLSItem(JSON.stringify(user));
     router.push("/");
   };
 
   const logout = () => {
-    signOut(auth).then(() => {
-      dispatch({ type: "SET_USER", payload: null });
-      toast.success('Signed out successfully')
-      router.push("for guests");
-    }).catch((error) => {
-      toast.error(error.message);
-    });
+    removeLSItem();
+    router.push("/login");
   };
 
   return { login, logout };
