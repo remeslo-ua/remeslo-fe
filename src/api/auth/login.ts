@@ -1,9 +1,9 @@
 import { ResStatus } from "@/constants/apiStatus/resStatus";
-import { User, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
+import { User, signInWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
 
 export const loginUser = async(email: string, password: string) => {
-  const auth = getAuth();
   const data = await signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user: User = userCredential.user;
