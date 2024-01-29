@@ -1,47 +1,78 @@
-'use client';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { User } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import React, { createContext, useReducer, useContext, ReactNode, Dispatch, useEffect } from 'react';
+"use client";
+import { auth } from "@/firebase/firebase";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import React, {
+  createContext,
+  useReducer,
+  useContext,
+  ReactNode,
+  Dispatch,
+  useEffect,
+} from "react";
 
 type State = {
-  user: User | null; 
+  user: User | null;
+  isLoading: boolean;
 };
 
 type Action = { type: string; payload?: any };
 
 const initialState: State = {
   user: null,
+  isLoading: true,
 };
 
-const AuthContext = createContext<{ state: State; dispatch: Dispatch<Action> } | undefined>(undefined);
+const AuthContext = createContext<
+  { state: State; dispatch: Dispatch<Action> } | undefined
+>(undefined);
 
-const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const router = useRouter();
   const [state, dispatch] = useReducer((state: State, action: Action) => {
     switch (action.type) {
-      case 'SET_USER':
+      case "SET_USER":
         return {
           ...state,
           user: action.payload,
         };
-        default:
-          return state;
-        }
-      }, initialState);
-      
-      const { LSItem } = useLocalStorage('user');
-      const storedUser = LSItem ? JSON.parse(LSItem) : null;
+      case "SET_LOADING":
+        return {
+          ...state,
+          isLoading: action.payload,
+        };
+      default:
+        return state;
+    }
+  }, initialState);
 
-  useEffect(() => {
-    if (storedUser) {
-      if (state.user?.uid !== storedUser.uid) {
-        dispatch({ type: 'SET_USER', payload: storedUser });
+  onAuthStateChanged(auth, (user) => {
+    const currentUrl = window.location.href;
+    if (user) {
+      if (state.user === null) {
+        dispatch({ type: "SET_USER", payload: user });
       }
     } else {
-      router.push('/login');
+      if (
+        !currentUrl.includes("/login") &&
+        !currentUrl.includes("/for-guests") &&
+        !currentUrl.includes("/signup")
+      ) {
+        router.push("for-guests");
+      }
+      console.warn("User is signed out");
     }
-  }, [state.user, router, storedUser]);
+
+    if (state.isLoading) {
+      dispatch({ type: "SET_LOADING", payload: false });
+    }
+  });
+
+  if (state.isLoading) {
+    return <div className="h-[100vh] flex justify-center">Loading...</div>;
+  }
 
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
@@ -53,7 +84,7 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuthContext must be used within a AuthContextProvider');
+    throw new Error("useAuthContext must be used within a AuthContextProvider");
   }
   return context;
 };

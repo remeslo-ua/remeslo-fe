@@ -1,48 +1,65 @@
-'use client';
-
+"use client";
 import { PrimaryInput } from "@/components/common/primary/PrimaryInput";
 import { profileInputs } from "./ProfileInputs";
-import { useAuthContext } from "@/providers/AuthProvider";
 import { useForm } from "react-hook-form";
 import { PrimaryButton } from "@/components/common/primary/PrimaryButton";
-import { getAuth, updateProfile } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
+import { useAuthContext } from "@/providers/AuthProvider";
+import { useEffect } from "react";
+import { ProfileFormFields } from "@/types/ProfileFormFields";
+import { auth } from "@/firebase/firebase";
 
 export const ProfileForm = () => {
-  const auth = getAuth();
-  const { state: { user } } = useAuthContext();
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { currentUser } = auth;
+  const {
+    register,
+    getValues,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProfileFormFields>({
+    defaultValues: {
+      name: currentUser?.displayName || "null",
+    },
+  });
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    if (currentUser === null) {
+      console.log("user is null");
+      return;
+    }
 
-    // updateProfile(auth.currentUser, {
-    //   displayName: data.displayName,
-    //   photoURL: data.photoURL
-    // }).then(() => {
-    //   console.log('updateProfile success');
-    // }).catch((error) => {
-    //   console.log('updateProfile error', error);
-    // });
+    updateProfile(currentUser, {
+      displayName: data.name,
+    })
+      .then(() => {
+        console.log("Profile updated");
+      })
+      .catch((error) => {
+        console.log("error profile", error);
+      });
   };
 
-  console.log(auth.currentUser)
+  useEffect(() => {
+    if (currentUser && currentUser.displayName) {
+      setValue("name", currentUser.displayName);
+    }
+  }, [currentUser?.displayName, currentUser]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {profileInputs.map(({name, label, type, validation}) => (
-          <PrimaryInput
-            key={name}
-            register={register}
-            name={name}
-            label={label}
-            type={type}
-            validation={validation}
-            errors={errors}
-          />
+      {profileInputs.map(({ name, label, type, validation }) => (
+        <PrimaryInput
+          key={name}
+          register={register}
+          name={name}
+          label={label}
+          type={type}
+          validation={validation}
+          errors={errors}
+        />
       ))}
-
       <PrimaryButton text="Save Changes" />
-      
     </form>
-  )
+  );
 };
