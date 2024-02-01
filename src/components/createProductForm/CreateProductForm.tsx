@@ -8,6 +8,7 @@ import { CustomUploadModal } from '../common/modals/CustomUploadModal';
 import { useState } from 'react';
 import { PrimaryTextarea } from '../common/primary/PrimaryTextarea';
 import { Image } from '@nextui-org/react';
+import { ProductCard } from '../common/cards/ProductCard';
 
 interface productFormInputs {
   photos: File[];
@@ -42,9 +43,16 @@ export const CreateProductForm = () => {
 	};
 
 	return (
-		<div className='grid grid-cols-2 h-[90vh]'>
+		<div className='grid grid-cols-2'>
       <section className='flex'>
-        {/* ProductCard */}
+        <ProductCard
+          // after rebase or change it logic
+          images={watch('photos').length ? watch('photos') : ['https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg']}
+          title={watch('name')}
+          description={watch('description')}
+          price={watch('price')}
+          currency='$'
+        />
       </section>
 
 			<form
@@ -64,9 +72,9 @@ export const CreateProductForm = () => {
         <div className='flex flex-row gap-3 items-center'>
           {watch('photos').map((photo) => (
             <Image
-              key={photo.lastModified}
+              key={photo.name}
               className='w-[50px] h-[50px]'
-              alt='product_photo'
+              alt={photo.name}
               src={URL.createObjectURL(photo)}
             />
           ))}
@@ -75,6 +83,7 @@ export const CreateProductForm = () => {
             <Image
               className='w-[50px] h-[50px]'
               alt='product_photo'
+              // after donwload another photo with the same content
               src='https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg'
             />
           )}

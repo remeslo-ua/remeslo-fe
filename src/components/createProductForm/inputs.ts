@@ -1,7 +1,7 @@
 export const productInputs = [
 	{
 		id: "1",
-		name: "product-name",
+		name: "name",
 		type: "text",
 		label: "Product Name",
 		validation: { required: { value: true, message: "Product Name is required" } },
