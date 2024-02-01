@@ -8,6 +8,7 @@ import { CustomUploadModal } from '../common/modals/CustomUploadModal';
 import { useState } from 'react';
 import { PrimaryTextarea } from '../common/primary/PrimaryTextarea';
 import { Image } from '@nextui-org/react';
+import { ProductCard } from '../common/cards/ProductCard';
 
 interface productFormInputs {
 	name: string;
@@ -43,11 +44,23 @@ export const CreateProductForm = () => {
     console.log(photos, name, description, price);
 	};
 
+  console.log(register('name', {}));
+
 	return (
-		<div className='flex justify-end h-[100vh]'>
+		<div className='grid grid-cols-2 h-[90vh]'>
+      <section className='flex'>
+        <ProductCard
+          images={photos.length ? photos : ['https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg']}
+          title='Name'
+          price='100'
+          description='Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus nam magnam, quo eveniet nostrum nemo nobis ipsum? Nisi, deserunt in.'
+          currency='$'
+        />
+      </section>
+
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className='w-[50vw] flex flex-col gap-3 p-5 justify-center'
+				className='flex flex-col gap-3 p-5 justify-center'
 			>
 
         <CustomUploadModal
@@ -77,7 +90,11 @@ export const CreateProductForm = () => {
             />
           )}
 
-          <PrimaryButton type='button' text='+' onClick={() => setIsModal(true)} />
+          <PrimaryButton
+            type='button'
+            text='+'
+            onClick={() => setIsModal(true)}
+          />
         </div>
 
 				{productInputs.map(

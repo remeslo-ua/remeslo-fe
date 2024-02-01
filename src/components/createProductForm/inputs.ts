@@ -5,6 +5,7 @@ export const productInputs = [
 		type: "text",
 		label: "Product Name",
 		validation: { required: { value: true, message: "Product Name is required" } },
+    fieldType: "input",
 	},
 	{
 		id: "2",
@@ -12,5 +13,6 @@ export const productInputs = [
 		type: "number",
 		label: "Price",
 		validation: { required: { value: true, message: "Price is required" } },
+    fieldType: "textarea",
 	},
 ];
