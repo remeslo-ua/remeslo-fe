@@ -50,7 +50,7 @@ export const CustomUploadModal = ({
                 {error && (
                   <div className="flex items-center w-full justify-center gap-2">
                     <div>
-                      Warning Field Icon
+                      {/* Warning Field Icon */}
                     </div>
                     <p className="prose-bodyBold md:prose-titleH6 text-[#B11B1B] md:text-[#B11B1B]">
                       {error}
@@ -59,7 +59,7 @@ export const CustomUploadModal = ({
                 )}
               </div>
               <div className="bg-[#F3F5F7] p-6 flex flex-col items-center gap-4 border-dashed border-[#0D3460] border-1 md:min-w-[600px] rounded">
-                Drag Icon
+                {/* Drag Icon */}
                 <h5 className="text-center text-[#2B2E2D] prose-bodyBold md:prose-titleH6 mt-4">
                   Select your photo or drag it in here
                 </h5>
