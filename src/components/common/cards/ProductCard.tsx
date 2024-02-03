@@ -17,12 +17,12 @@ export const ProductCard: React.FC<Props> = ({
   price,
   currency,
 }) => (
-  <article className='flex flex-col justify-between w-[250px] h-[330px] bg-[#fefefe] m-auto p-[15px] rounded-lg'>
+  <article className='flex flex-col justify-between w-[250px] h-[330px] bg-white m-auto p-[15px] rounded-lg border-1 border-gray-300'>
     <div className='w-[250px]'>
       {images.map((img) => (
         <Image
           key={img instanceof File ? img.lastModified : img}
-          className='w-[220px] h-[140px] rounded-sm'
+          className='w-[220px] h-[140px]'
           alt='product_photo'
           src={img instanceof File ? URL.createObjectURL(img) : img}
         />

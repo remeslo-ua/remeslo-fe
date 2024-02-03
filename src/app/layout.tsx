@@ -24,8 +24,9 @@ export default function RootLayout({
             <Nav />
             {children}
           </Providers>
+
+          <script src="https://kit.fontawesome.com/d8e569da66.js" crossOrigin="anonymous" />
         </body>
-        <script src="https://kit.fontawesome.com/d8e569da66.js" crossOrigin="anonymous"></script>
     </html>
   )
 }
