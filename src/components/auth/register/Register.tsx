@@ -38,26 +38,29 @@ export const Register = () => {
   };
 
   return (
-    <div className="flex justify-end h-[100vh]">
-      <div className="w-[50vw] flex flex-col gap-3 p-5 justify-center">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {regInputs.map(({ name, label, id, type, validation }) => (
-            <PrimaryInput
-              key={id}
-              name={name}
-              label={label}
-              type={type}
-              register={register}
-              validation={validation}
-              errors={errors}
-            />
-          ))}
-          <PrimaryButton
-            text="Register"
-            isDisabled={!!errors.passwordConfirm}
+    <div className="flex justify-end items-center overflow-scroll">
+      <form 
+        className="w-[50vw] flex flex-col gap-3 p-5 justify-center" 
+        onSubmit={handleSubmit(onSubmit)}
+        >
+        <h1 className="prose-titleH1 m-5">Registration</h1>
+
+        {regInputs.map(({ name, label, id, type, validation }) => (
+          <PrimaryInput
+            key={id}
+            name={name}
+            label={label}
+            type={type}
+            register={register}
+            validation={validation}
+            errors={errors}
           />
-        </form>
-      </div>
+        ))}
+        <PrimaryButton
+          text="Register"
+          isDisabled={!!errors.passwordConfirm}
+        />
+      </form>
     </div>
   );
 };
