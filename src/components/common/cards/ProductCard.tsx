@@ -9,7 +9,7 @@ interface Props {
   currency: '$';
 }
 
-// Product Card component will be updates but I stay it so now
+// Product Card don't finished look
 export const ProductCard: React.FC<Props> = ({
   images,
   title,
