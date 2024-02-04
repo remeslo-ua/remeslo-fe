@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-sync-scripts */
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -23,6 +24,8 @@ export default function RootLayout({
             <Nav />
             {children}
           </Providers>
+
+          <script src="https://kit.fontawesome.com/d8e569da66.js" crossOrigin="anonymous" />
         </body>
     </html>
   )

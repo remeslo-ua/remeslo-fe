@@ -7,7 +7,7 @@ export const SignOutBtn = () => {
   const { logout } = useLoginLogout();
   return (
     <div>
-      <Button onClick={logout} >Sign Out</Button>
+      <Button onClick={logout}>Sign Out</Button>
     </div>
   );
 };
