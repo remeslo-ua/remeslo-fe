@@ -1,13 +1,10 @@
 "use client";
-
-import "../../../firebase/firebase";
 import { logInputs } from "./inputs";
 import { useForm } from "react-hook-form";
-import { PrimaryButton } from "@/components/common/primary/PrimaryButton";
-import { PrimaryInput } from "@/components/common/primary/PrimaryInput";
-import { loginUser } from "@/api/auth/login";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PrimaryInput } from "../../common/primary/PrimaryInput";
+import { PrimaryButton } from "../../common/primary/PrimaryButton";
 
 interface logFormInputs {
   email: string;
@@ -30,7 +27,7 @@ export const Login = () => {
 
   const onSubmit = async ({ email, password }: logFormInputs) => {
     setIsLoading(true);
-    await loginUser(email, password);
+    // await loginUser(email, password);
     router.push("/");
     setIsLoading(false);
   };

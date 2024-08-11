@@ -1,6 +1,4 @@
 "use client";
-import { auth } from "@/firebase/firebase";
-import { User, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import React, {
   createContext,
@@ -8,11 +6,10 @@ import React, {
   useContext,
   ReactNode,
   Dispatch,
-  useEffect,
 } from "react";
 
 type State = {
-  user: User | null;
+  user: any | null;
   isLoading: boolean;
 };
 
@@ -48,31 +45,9 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, initialState);
 
-  onAuthStateChanged(auth, (user) => {
-    const currentUrl = window.location.href;
-    if (user) {
-      if (state.user === null) {
-        dispatch({ type: "SET_USER", payload: user });
-      }
-    } else {
-      if (
-        !currentUrl.includes("/login") &&
-        !currentUrl.includes("/for-guests") &&
-        !currentUrl.includes("/signup")
-      ) {
-        router.push("for-guests");
-      }
-      console.warn("User is signed out");
-    }
-
-    if (state.isLoading) {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
-  });
-
-  if (state.isLoading) {
-    return <div className="h-[100vh] flex justify-center">Loading...</div>;
-  }
+  // if (state.isLoading) {
+  //   return <div className="h-[100vh] flex justify-center">Loading...</div>;
+  // }
 
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
