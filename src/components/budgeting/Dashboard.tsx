@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { Chart } from "react-google-charts";
 import { useAuthContext } from "@/providers/AuthProvider";
@@ -15,11 +15,7 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [budgetGoal, setBudgetGoal] = useState(5000); // Monthly budget goal, hardcoded for now
 
-  useEffect(() => {
-    fetchSummary();
-  }, []);
-
-  const fetchSummary = async () => {
+  const fetchSummary = useCallback(async () => {
     try {
       // Fetch expenses and income for current month
       const currentDate = new Date();
@@ -53,7 +49,11 @@ export const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [state.token]);
+
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { PrimaryButton } from "../marketplace/common/primary/PrimaryButton";
 import { PrimaryInput } from "../marketplace/common/primary/PrimaryInput";
@@ -29,11 +29,7 @@ export const CategoryManager = ({ onClose }: CategoryManagerProps) => {
     color: '#3B82F6',
   });
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch("/api/budgeting/categories", {
         headers: {
@@ -50,7 +46,11 @@ export const CategoryManager = ({ onClose }: CategoryManagerProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [state.token]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

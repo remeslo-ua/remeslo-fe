@@ -1,5 +1,5 @@
  "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { PrimaryButton } from "../marketplace/common/primary/PrimaryButton";
 import { PrimaryInput } from "../marketplace/common/primary/PrimaryInput";
@@ -38,13 +38,7 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
     reset,
   } = useForm<ExpenseFormData>();
 
-  useEffect(() => {
-    if (!notesFetched) {
-      fetchNotes();
-    }
-  }, [notesFetched]);
-
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     try {
       const response = await fetch("/api/budgeting/expenses/notes", {
         headers: {
@@ -61,7 +55,13 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
     } finally {
       setNotesFetched(true);
     }
-  };
+  }, [state.token]);
+
+  useEffect(() => {
+    if (!notesFetched) {
+      fetchNotes();
+    }
+  }, [notesFetched, fetchNotes]);
 
   const onSubmit = async (data: ExpenseFormData) => {
     setIsLoading(true);

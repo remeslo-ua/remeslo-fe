@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { PrimaryButton } from "../marketplace/common/primary/PrimaryButton";
 import { useAuthContext } from "@/providers/AuthProvider";
@@ -35,11 +35,7 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [page, type]);
-
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       const response = await fetch(`/api/budgeting/${type === 'expense' ? 'expenses' : 'income'}?page=${page}&limit=10`, {
         headers: {
@@ -57,7 +53,11 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [type, page, state.token]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
