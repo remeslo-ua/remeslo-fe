@@ -33,11 +33,7 @@ export const PrimaryButton: React.FC<Props> = ({
       }`}
       type={type}
       isDisabled={isDisabled}
-      onClick={() => {
-        if (type === 'button' && onClick) {
-          onClick();
-        }
-      }}
+      {...(type === 'button' ? { onClick } : {})}
     >
       {isLoading ? (
         <Spinner color={text === 'REGISTRATI' ? 'default' : 'white'} />

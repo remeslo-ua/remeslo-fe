@@ -1,33 +1,42 @@
 'use client';
-import { SignOutBtn } from "../common/signOutBtn/SignOutBtn";
 import { ProfileForm } from "./profileForm/ProfileForm";
-import { auth } from "@/firebase/firebase";
+import { SignOutBtn } from "./SignOutBtn";
+import { useAuthContext } from "@/providers/AuthProvider";
+import { PrimaryButton } from "../common/primary/PrimaryButton";
+import Link from "next/link";
+import AuthGuard from "../../AuthGuard";
 
 export const Profile = () => {
-  const { currentUser } = auth;
+  const { state } = useAuthContext();
 
-  if (currentUser === null) {
-    console.log("user is null");
-    return;
-  } 
-  console.log('user is here', currentUser);
-
-  const { displayName } = currentUser;
+  const { name, email } = state.user!;
 
   return (
-    <div className="m-5 flex flex-col gap-5">
-      <div>
-        <div>{displayName}</div>
-        <div>Here is your Remeslo Profile</div>
-        <div>Define how the community will see you</div>
-        <div>Build your persona carefully</div>
-      </div>
+    <AuthGuard>
+      <div className="m-5 flex flex-col gap-5">
+        <div>
+          <div>{name || email}</div>
+          <div>Here is your Remeslo Profile</div>
+          <div>Define how the community will see you</div>
+          <div>Build your persona carefully</div>
+        </div>
 
-      <div>
-        <ProfileForm />
-      </div>
+        <div>
+          <ProfileForm />
+        </div>
 
-      <SignOutBtn />
-    </div>
+        <div className="flex gap-4 justify-center">
+          <Link href="/">
+            <PrimaryButton
+              text="Go Back Home"
+              type="button"
+              color="bg-gray-500"
+              styles="hover:bg-gray-600"
+            />
+          </Link>
+          <SignOutBtn />
+        </div>
+      </div>
+    </AuthGuard>
   );
 };

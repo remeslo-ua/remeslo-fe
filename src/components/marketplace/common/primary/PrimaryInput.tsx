@@ -6,7 +6,7 @@ interface Props {
   label: string;
   type?: string;
   autocomplete?: string;
-  validation: any;
+  validation?: any;
   errors: any;
 }
 
@@ -21,7 +21,7 @@ export const PrimaryInput: React.FC<Props> = ({
   return (
     <div className="mb-5">
       <Input
-        {...register(name, validation)}
+        {...register(name, validation || {})}
         variant="bordered"
         labelPlacement="inside"
         label={label}

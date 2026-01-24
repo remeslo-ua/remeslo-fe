@@ -1,13 +1,12 @@
-export const validations = {
-  email: {
-    required: { value: true, message: "Email is required" },
-    pattern: {
-      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-      message: "Invalid email address",
-    },
-  },
-  password: {
-    required: { value: true, message: "Password is required" },
-    minLength: { value: 8, message: "Password must be at least 8 characters" },
-  },
-};
+import * as yup from 'yup';
+
+const baseSchema = yup.object().shape({
+  login: yup.string().required("Login is required"),
+  password: yup.string().required("Password is required").matches(/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]*$/, "Password can only contain letters, numbers, and special characters"),
+});
+
+export const loginSchema = baseSchema;
+
+export const registerSchema = baseSchema.shape({
+  passwordConfirm: yup.string().required('Confirm password is required').oneOf([yup.ref('password')], 'The passwords do not match'),
+});

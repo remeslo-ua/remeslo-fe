@@ -1,0 +1,145 @@
+"use client";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { PrimaryButton } from "../marketplace/common/primary/PrimaryButton";
+import { PrimaryInput } from "../marketplace/common/primary/PrimaryInput";
+import { PrimaryTextarea } from "../marketplace/common/primary/PrimaryTextarea";
+import { useAuthContext } from "@/providers/AuthProvider";
+import toast from "react-hot-toast";
+
+interface IncomeFormData {
+  amount: string;
+  note: string;
+}
+
+interface AddIncomeFormProps {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
+  const { state } = useAuthContext();
+  const [notes, setNotes] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [notesFetched, setNotesFetched] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<IncomeFormData>();
+
+  useEffect(() => {
+    if (!notesFetched) {
+      fetchNotes();
+    }
+  }, [notesFetched]);
+
+  const fetchNotes = async () => {
+    try {
+      const response = await fetch("/api/budgeting/income/notes", {
+        headers: {
+          "Authorization": `Bearer ${state.token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setNotes(data.notes || []);
+      }
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+    } finally {
+      setNotesFetched(true);
+    }
+  };
+
+
+  const onSubmit = async (data: IncomeFormData) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/budgeting/income", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${state.token}`,
+        },
+        body: JSON.stringify({
+          amount: data.amount,
+          description: data.note,
+          date: new Date(),
+          paymentMethod: 'cash',
+          status: 'received',
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to add income");
+      }
+
+      toast.success("Income added successfully!");
+      reset();
+      onSuccess?.();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to add income");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <PrimaryInput
+        name="amount"
+        label="Income Amount"
+        type="number"
+        register={register}
+        validation={{
+          required: "Amount is required",
+          min: { value: 0.01, message: "Amount must be greater than 0" },
+        }}
+        errors={errors}
+      />
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Note</label>
+        <input
+          {...register("note", { required: "Note is required" })}
+          list="notes-list"
+          className="w-full p-2 border rounded-md"
+          placeholder="Enter a note for this income"
+        />
+        <datalist id="notes-list">
+          {notes.map((note, index) => (
+            <option key={index} value={note} />
+          ))}
+        </datalist>
+        {errors.note && (
+          <p className="text-red-500 text-sm mt-1">{errors.note.message}</p>
+        )}
+      </div>
+
+      <div className="flex gap-4 justify-end">
+        {onCancel && (
+          <PrimaryButton
+            text="Cancel"
+            type="button"
+            color="bg-gray-500"
+            styles="hover:bg-gray-600"
+            onClick={onCancel}
+          />
+        )}
+        <PrimaryButton
+          text="Add Income"
+          type="submit"
+          isLoading={isLoading}
+          color="bg-green-500"
+          styles="hover:bg-green-600"
+        />
+      </div>
+    </form>
+  );
+};

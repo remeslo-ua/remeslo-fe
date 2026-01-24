@@ -1,4 +1,4 @@
-import { CreateProductForm } from "@/components/createProductForm/CreateProductForm";
+import { CreateProductForm } from "@/components/marketplace/createProductForm/CreateProductForm";
 
 export default function CreateProductPage() {
   return <CreateProductForm />;

@@ -1,4 +1,4 @@
-import { Profile } from "@/components/profile/Profile";
+import { Profile } from "@/components/marketplace/profile/Profile";
 
 
 export default function LoginPage() {
