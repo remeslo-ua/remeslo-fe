@@ -9,7 +9,11 @@ import AuthGuard from "../../AuthGuard";
 export const Profile = () => {
   const { state } = useAuthContext();
 
-  const { name, email } = state.user!;
+  if (!state.user) {
+    return <div>Please log in to view your profile.</div>;
+  }
+
+  const { name, email } = state.user;
 
   return (
     <AuthGuard>

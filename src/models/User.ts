@@ -1,5 +1,15 @@
 import mongoose from 'mongoose';
 
+export interface IUser extends mongoose.Document {
+  email: string;
+  password: string;
+  name?: string;
+  role: 'user' | 'admin';
+  accessibleApps: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -41,4 +51,5 @@ UserSchema.pre('save', function(next) {
   next();
 });
 
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+export default User;

@@ -3,6 +3,8 @@ import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { getUserFromToken } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
