@@ -8,6 +8,7 @@ import React, {
   Dispatch,
   useEffect,
 } from "react";
+import amplitude from "@/analitics/amplitude/amplitude";
 
 export interface User {
   _id: string;
@@ -48,6 +49,20 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   const [state, dispatch] = useReducer((state: State, action: Action) => {
     switch (action.type) {
       case "SET_USER":
+        // Identify user in Amplitude when user is set
+        if (action.payload) {
+          amplitude.setUserId(action.payload._id);
+          amplitude.identify(
+            new amplitude.Identify()
+              .set("email", action.payload.email)
+              .set("name", action.payload.name || "")
+              .set("role", action.payload.role)
+              .set("accessibleApps", action.payload.accessibleApps)
+              .set("loginTime", new Date().toISOString())
+          );
+        } else {
+          amplitude.reset(); // Clear user identity on logout
+        }
         return {
           ...state,
           user: action.payload,
@@ -69,6 +84,7 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
         };
       case "LOGOUT":
         localStorage.removeItem("token");
+        amplitude.reset(); // Clear amplitude user identity
         return {
           ...state,
           user: null,

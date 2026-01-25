@@ -1,17 +1,30 @@
 // amplitude.ts
-'use client';
+"use client";
 
-import * as amplitude from '@amplitude/analytics-browser';
-import { sessionReplayPlugin } from '@amplitude/plugin-session-replay-browser';
+import * as amplitude from "@amplitude/analytics-browser";
 
-function initAmplitude() {
-  if (typeof window !== 'undefined') {
-    amplitude.add(sessionReplayPlugin());
-    amplitude.init('6024a13377c652c386aa3113f162a0fd', {"autocapture":true,"serverZone":"EU"});
+async function initAmplitude() {
+  const apiKey = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY;
+
+  if (typeof window === "undefined" || !apiKey) {
+    console.warn(
+      "Amplitude not initialized: running on server or missing NEXT_PUBLIC_AMPLITUDE_API_KEY",
+    );
+    return;
+  }
+
+  try {
+    await amplitude.init(apiKey, undefined, {
+    autocapture: true,
+  }).promise
+  } catch (err) {
+    console.error("Amplitude init failed:", err);
   }
 }
 
 initAmplitude();
+
+
 
 export const Amplitude = () => null;
 export default amplitude;

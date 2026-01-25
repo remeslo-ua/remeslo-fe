@@ -1,8 +1,6 @@
 "use client";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { PrimaryButton } from "../components/marketplace/common/primary/PrimaryButton";
 import { AppsSection } from "../components/AppsSection";
-import Link from "next/link";
 import { Nav } from "@/components/marketplace/nav/Nav";
 
 export default function Home() {
@@ -18,22 +16,6 @@ export default function Home() {
             <div className="flex justify-center">
               you have to be registered and logged in to see available apps
             </div>
-            <Link href="/marketplace/login">
-              <PrimaryButton
-                text="Login"
-                type="button"
-                color="bg-blue-500"
-                styles="hover:bg-blue-600"
-              />
-            </Link>
-            <Link href="/marketplace/register">
-              <PrimaryButton
-                text="Register"
-                type="button"
-                color="bg-green-500"
-                styles="hover:bg-green-600"
-              />
-            </Link>
           </div>
         ) : (
           <div className="text-center mb-8">

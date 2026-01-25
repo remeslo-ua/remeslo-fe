@@ -1,59 +1,59 @@
 /* eslint-disable @next/next/no-sync-scripts */
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { Providers } from './providers';
-import PWARegister from '../components/PWARegister';
-import { Amplitude } from '@/analitics/amplitude/amplitude';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Providers } from "./providers";
+import PWARegister from "../components/PWARegister";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Remeslo',
-  description: 'Remeslo - Your personal budgeting and marketplace app',
-  manifest: '/manifest.json',
-  themeColor: '#000000',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  title: "Remeslo",
+  description: "Remeslo - Your personal budgeting and marketplace app",
+  manifest: "/manifest.json",
+  themeColor: "#000000",
+  viewport:
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
-    title: 'Remeslo',
+    statusBarStyle: "default",
+    title: "Remeslo",
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
-    type: 'website',
-    siteName: 'Remeslo',
-    title: 'Remeslo',
-    description: 'Your personal budgeting and marketplace app',
+    type: "website",
+    siteName: "Remeslo",
+    title: "Remeslo",
+    description: "Your personal budgeting and marketplace app",
   },
   twitter: {
-    card: 'summary',
-    title: 'Remeslo',
-    description: 'Your personal budgeting and marketplace app',
+    card: "summary",
+    title: "Remeslo",
+    description: "Your personal budgeting and marketplace app",
   },
   icons: {
-    icon: '/icon-192x192.png',
-    apple: '/icon-192x192.png',
+    icon: "/icon-192x192.png",
+    apple: "/icon-192x192.png",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-        <body suppressHydrationWarning={true} className={inter.className}>
-          <Amplitude />
-          <Providers>
-            {children}
-          </Providers>
-          <PWARegister />
-          <script src="https://kit.fontawesome.com/d8e569da66.js" crossOrigin="anonymous" />
-        </body>
+      <body suppressHydrationWarning={true} className={inter.className}>
+        <Providers>{children}</Providers>
+        <PWARegister />
+        <script
+          src="https://kit.fontawesome.com/d8e569da66.js"
+          crossOrigin="anonymous"
+        />
+      </body>
     </html>
-  )
+  );
 }

@@ -4,13 +4,13 @@ import Link from "next/link";
 export const SignupLoginBtns = () => (
   <NavbarContent justify='end'>
     <NavbarItem className='hidden lg:flex'>
-      <Link href='/login'>Login</Link>
+      <Link href='auth/login'>Login</Link>
     </NavbarItem>
     <NavbarItem>
       <Button
         as={Link}
         color='warning'
-        href='/register'
+        href='auth/register'
         variant='flat'
       >
         Sign Up
