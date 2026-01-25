@@ -46,10 +46,10 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex justify-end items-center">
+    <div className="flex items-center">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-[50vw] flex flex-col gap-3 p-5 justify-center"
+        className="flex flex-col gap-3 p-5 justify-center"
       >
         <h1 className="prose-titleH1 m-5">login</h1>
 

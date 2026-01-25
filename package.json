@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.33.5",
+    "@amplitude/plugin-session-replay-browser": "^1.25.9",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@hookform/resolvers": "^5.2.2",

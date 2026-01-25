@@ -16,7 +16,7 @@ export const NavMenuItem: React.FC<Props> = ({ item, index }) => (
           ? "danger"
           : "foreground"
       }
-      href={item}
+      href={`marketplace/${item.toLowerCase()}`}
       size='lg'
     >
       {item}

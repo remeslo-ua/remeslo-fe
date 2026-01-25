@@ -9,9 +9,9 @@ import {
 import { useState } from "react";
 import { menuItems } from "./menuItems";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { ProfileBtn } from "./ProfileBtn";
 import { NavMenuItem } from "./NavMenuItem";
 import { SignupLoginBtns } from "./SignupLoginBtns";
+import { PWAInstallMenuItem } from "./PWAInstallMenuItem";
 
 export const Nav = () => {
   const { state } = useAuthContext();
@@ -27,12 +27,13 @@ export const Nav = () => {
             />
           </NavbarContent>
 
-          <ProfileBtn />
+          {/* <ProfileBtn /> */}
         </>
       ) : (
         <SignupLoginBtns />
       )}
       <NavbarMenu>
+        <PWAInstallMenuItem />
         {menuItems.map((item, index) => (
           <NavMenuItem key={index} item={item} index={index} />
         ))}

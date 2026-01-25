@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import PWARegister from '../components/PWARegister';
+import { Amplitude } from '@/analitics/amplitude/amplitude';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -32,6 +33,10 @@ export const metadata: Metadata = {
     title: 'Remeslo',
     description: 'Your personal budgeting and marketplace app',
   },
+  icons: {
+    icon: '/icon-192x192.png',
+    apple: '/icon-192x192.png',
+  },
 }
 
 export default function RootLayout({
@@ -42,6 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en">
         <body suppressHydrationWarning={true} className={inter.className}>
+          <Amplitude />
           <Providers>
             {children}
           </Providers>
