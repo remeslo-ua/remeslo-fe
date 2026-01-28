@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 import React, {
   createContext,
   useReducer,
@@ -129,7 +130,7 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch(ROUTES.API.AUTH.LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -152,14 +153,14 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
 
   const logout = async () => {
     try {
-      await fetch("/api/auth/logout", {
+      await fetch(ROUTES.API.AUTH.LOGOUT, {
         method: "POST",
       });
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
       dispatch({ type: "LOGOUT" });
-      router.push("/");
+      router.push(ROUTES.HOME);
     }
   };
 

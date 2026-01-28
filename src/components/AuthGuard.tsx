@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
+import { ROUTES } from "@/constants/routes";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,7 +14,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
   useEffect(() => {
     if (!state.isLoading && !state.user) {
-      router.push("/marketplace/login");
+      router.push(ROUTES.AUTH.LOGIN);
     }
   }, [state.isLoading, state.user, router]);
 

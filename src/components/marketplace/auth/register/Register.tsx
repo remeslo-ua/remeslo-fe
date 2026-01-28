@@ -8,6 +8,7 @@ import { PrimaryButton } from "../../common/primary/PrimaryButton";
 import { PrimaryInput } from "../../common/primary/PrimaryInput";
 import { useRouter } from "next/navigation";
 import { registerSchema } from "@/constants/validations/authValidations";
+import { ROUTES } from "@/constants/routes";
 import toast from "react-hot-toast";
 
 interface regFormInputs {
@@ -36,7 +37,7 @@ export const Register = () => {
     console.log("onSubmit called with", { login, password });
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch(ROUTES.API.AUTH.REGISTER, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,7 +53,7 @@ export const Register = () => {
       }
 
       toast.success("Registration successful! Please login.");
-      router.push("/marketplace/login");
+      router.push(ROUTES.AUTH.LOGIN);
     } catch (error: any) {
       console.error("Registration error:", error);
       toast.error(error.message || "Registration failed");

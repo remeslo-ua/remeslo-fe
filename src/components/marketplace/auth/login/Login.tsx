@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 import { PrimaryInput } from "../../common/primary/PrimaryInput";
 import { PrimaryButton } from "../../common/primary/PrimaryButton";
 import { useAuthContext } from "@/providers/AuthProvider";
@@ -37,7 +38,7 @@ export const Login = () => {
     try {
       await authLogin(login, password);
       toast.success("Login successful!");
-      router.push("/");
+      router.push(ROUTES.HOME);
     } catch (error: any) {
       toast.error(error.message || "Login failed");
     } finally {

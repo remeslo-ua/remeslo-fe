@@ -5,6 +5,7 @@ import { useAuthContext } from "@/providers/AuthProvider";
 import { PrimaryButton } from "../common/primary/PrimaryButton";
 import Link from "next/link";
 import AuthGuard from "../../AuthGuard";
+import { ROUTES } from "@/constants/routes";
 
 export const Profile = () => {
   const { state } = useAuthContext();
@@ -30,7 +31,7 @@ export const Profile = () => {
         </div>
 
         <div className="flex gap-4 justify-center">
-          <Link href="/">
+          <Link href={ROUTES.HOME}>
             <PrimaryButton
               text="Go Back Home"
               type="button"

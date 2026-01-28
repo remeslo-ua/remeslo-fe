@@ -34,8 +34,8 @@ export const Nav = () => {
       )}
       <NavbarMenu>
         <PWAInstallMenuItem />
-        {menuItems.map((item, index) => (
-          <NavMenuItem key={index} item={item} index={index} />
+        {menuItems.map((item) => (
+          <NavMenuItem key={item.label} item={item} />
         ))}
       </NavbarMenu>
     </Navbar>

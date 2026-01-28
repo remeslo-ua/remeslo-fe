@@ -2,16 +2,17 @@
 import { AddIncomeForm } from "../../../../components/budgeting/AddIncomeForm";
 import { useRouter } from "next/navigation";
 import AuthGuard from "../../../../components/AuthGuard";
+import { ROUTES } from "@/constants/routes";
 
 export default function AddIncomePage() {
   const router = useRouter();
 
   const handleSuccess = () => {
-    router.push("/apps/budgeting");
+    router.push(ROUTES.BUDGETING.HOME);
   };
 
   const handleCancel = () => {
-    router.push("/apps/budgeting");
+    router.push(ROUTES.BUDGETING.HOME);
   };
 
   return (

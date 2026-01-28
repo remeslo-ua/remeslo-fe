@@ -8,6 +8,7 @@ import { TransactionsList } from "../../../components/budgeting/TransactionsList
 import { Dashboard } from "../../../components/budgeting/Dashboard";
 import { BudgetSettings } from "../../../components/budgeting/BudgetSettings";
 import AuthGuard from "../../../components/AuthGuard";
+import { ROUTES } from "@/constants/routes";
 
 interface Category {
   _id: string;
@@ -41,12 +42,12 @@ export default function BudgetingPage() {
             </button>
           </div>
           <div className="flex justify-center gap-4 md:gap-6 mb-8">
-            <Link href="/apps/budgeting/add-expense">
+            <Link href={ROUTES.BUDGETING.ADD_EXPENSE}>
               <button className="w-[38px] h-[38px] md:w-40 md:h-40 rounded-full bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-bold flex flex-col items-center justify-center text-center transition-colors shadow-lg gap-2">
                 <FontAwesomeIcon icon={faMinus} className="w-6 h-6 md:w-8 md:h-8" />
               </button>
             </Link>
-            <Link href="/apps/budgeting/add-income">
+            <Link href={ROUTES.BUDGETING.ADD_INCOME}>
               <button className="w-[38px] h-[38px] md:w-40 md:h-40 rounded-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold flex flex-col items-center justify-center text-center transition-colors shadow-lg gap-2">
                 <FontAwesomeIcon icon={faPlus} className="w-6 h-6 md:w-8 md:h-8" />
               </button>

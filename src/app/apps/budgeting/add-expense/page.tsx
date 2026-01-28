@@ -2,16 +2,17 @@
 import { AddExpenseForm } from "../../../../components/budgeting/AddExpenseForm";
 import { useRouter } from "next/navigation";
 import AuthGuard from "../../../../components/AuthGuard";
+import { ROUTES } from "@/constants/routes";
 
 export default function AddExpensePage() {
   const router = useRouter();
 
   const handleSuccess = () => {
-    router.push("/apps/budgeting");
+    router.push(ROUTES.BUDGETING.HOME);
   };
 
   const handleCancel = () => {
-    router.push("/apps/budgeting");
+    router.push(ROUTES.BUDGETING.HOME);
   };
 
   return (

@@ -1,5 +1,6 @@
 import { Avatar, Badge, NavbarBrand, NavbarContent } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 
 export const ProfileBtn = () => {
 	const router = useRouter();
@@ -9,7 +10,7 @@ export const ProfileBtn = () => {
 			<NavbarBrand
 				className='cursor-pointer'
 				onClick={() => {
-					router.push("/profile");
+					router.push(ROUTES.AUTH.PROFILE);
 				}}
 			>
 				<Badge
