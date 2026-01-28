@@ -6,6 +6,10 @@ export interface IUser extends mongoose.Document {
   name?: string;
   role: 'user' | 'admin';
   accessibleApps: string[];
+  theme?: 'light' | 'dark';
+  budgetGoal?: number;
+  currencySymbol?: string;
+  analyticsTimeRange?: 'month' | 'year' | 'all-time';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,6 +39,24 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['marketplace', 'hookah-picker', 'budgeting'],
   }],
+  theme: {
+    type: String,
+    enum: ['light', 'dark'],
+    default: 'light',
+  },
+  budgetGoal: {
+    type: Number,
+    min: 0,
+  },
+  currencySymbol: {
+    type: String,
+    default: '$',
+  },
+  analyticsTimeRange: {
+    type: String,
+    enum: ['month', 'year', 'all-time'],
+    default: 'month',
+  },
   createdAt: {
     type: Date,
     default: Date.now,

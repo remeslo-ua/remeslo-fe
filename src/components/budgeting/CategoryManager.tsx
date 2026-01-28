@@ -1,8 +1,41 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
-import { PrimaryButton } from "../marketplace/common/primary/PrimaryButton";
-import { PrimaryInput } from "../marketplace/common/primary/PrimaryInput";
+import { PrimaryButton, IconPicker } from "@/components/shared";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBox,
+  faUsers,
+  faWrench,
+  faFileContract,
+  faShieldHalved,
+  faBolt,
+  faCar,
+  faScrewdriverWrench,
+  faBullhorn,
+  faPen,
+  faBriefcase,
+  faFileInvoiceDollar,
+  faMoneyBillWave,
+  faFileSignature,
+  faBoxesStacked,
+  faHandHoldingDollar,
+  faCommentsDollar,
+  faShoppingCart,
+  faUtensils,
+  faHome,
+  faFilm,
+  faHeartPulse,
+  faGraduationCap,
+  faPlane,
+  faGift,
+  faPiggyBank,
+  faChartLine,
+  faCreditCard,
+  faLandmark,
+  faCircleDollarToSlot,
+  faQuestion,
+} from '@fortawesome/free-solid-svg-icons';
 import { useAuthContext } from "@/providers/AuthProvider";
 import toast from "react-hot-toast";
 
@@ -11,6 +44,8 @@ interface Category {
   name: string;
   type: 'expense' | 'income';
   color: string;
+  icon?: string;
+  iconType?: string;
   isDefault: boolean;
 }
 
@@ -27,7 +62,46 @@ export const CategoryManager = ({ onClose }: CategoryManagerProps) => {
     name: '',
     type: 'expense' as 'expense' | 'income',
     color: '#3B82F6',
+    icon: 'box',
   });
+
+  const iconMap: { [key: string]: any } = {
+    'box': faBox,
+    'users': faUsers,
+    'wrench': faWrench,
+    'file-contract': faFileContract,
+    'shield-halved': faShieldHalved,
+    'bolt': faBolt,
+    'car': faCar,
+    'screwdriver-wrench': faScrewdriverWrench,
+    'bullhorn': faBullhorn,
+    'pen': faPen,
+    'briefcase': faBriefcase,
+    'file-invoice-dollar': faFileInvoiceDollar,
+    'money-bill-wave': faMoneyBillWave,
+    'file-signature': faFileSignature,
+    'boxes-stacked': faBoxesStacked,
+    'hand-holding-dollar': faHandHoldingDollar,
+    'comments-dollar': faCommentsDollar,
+    'shopping-cart': faShoppingCart,
+    'utensils': faUtensils,
+    'home': faHome,
+    'film': faFilm,
+    'heart-pulse': faHeartPulse,
+    'graduation-cap': faGraduationCap,
+    'plane': faPlane,
+    'gift': faGift,
+    'piggy-bank': faPiggyBank,
+    'chart-line': faChartLine,
+    'credit-card': faCreditCard,
+    'landmark': faLandmark,
+    'circle-dollar-to-slot': faCircleDollarToSlot,
+  };
+
+  const getIcon = (icon?: string) => {
+    if (!icon) return faQuestion;
+    return iconMap[icon] || faQuestion;
+  };
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -72,7 +146,7 @@ export const CategoryManager = ({ onClose }: CategoryManagerProps) => {
       }
 
       toast.success("Category created successfully!");
-      setFormData({ name: '', type: 'expense', color: '#3B82F6' });
+      setFormData({ name: '', type: 'expense', color: '#3B82F6', icon: 'box' });
       setShowForm(false);
       fetchCategories();
     } catch (error: any) {
@@ -152,7 +226,7 @@ export const CategoryManager = ({ onClose }: CategoryManagerProps) => {
         {showForm && (
           <form onSubmit={handleSubmit} className="mb-6 p-4 border rounded-lg bg-gray-50">
             <h4 className="text-lg font-medium mb-4">Create New Category</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Category Name</label>
                 <input
@@ -174,6 +248,14 @@ export const CategoryManager = ({ onClose }: CategoryManagerProps) => {
                   <option value="expense">Expense</option>
                   <option value="income">Income</option>
                 </select>
+              </div>
+
+              <div>
+                <IconPicker
+                  value={formData.icon}
+                  onChange={(icon) => setFormData({ ...formData, icon })}
+                  label="Icon"
+                />
               </div>
 
               <div>
@@ -210,6 +292,13 @@ export const CategoryManager = ({ onClose }: CategoryManagerProps) => {
                   style={{ borderColor: category.color }}
                 >
                   <div className="flex items-center gap-3">
+                    {category.icon && (
+                      <FontAwesomeIcon
+                        icon={getIcon(category.icon)}
+                        className="w-4 h-4"
+                        style={{ color: category.color }}
+                      />
+                    )}
                     <div
                       className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: category.color }}
@@ -245,6 +334,13 @@ export const CategoryManager = ({ onClose }: CategoryManagerProps) => {
                   style={{ borderColor: category.color }}
                 >
                   <div className="flex items-center gap-3">
+                    {category.icon && (
+                      <FontAwesomeIcon
+                        icon={getIcon(category.icon)}
+                        className="w-4 h-4"
+                        style={{ color: category.color }}
+                      />
+                    )}
                     <div
                       className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: category.color }}

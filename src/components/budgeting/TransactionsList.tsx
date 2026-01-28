@@ -1,8 +1,11 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
-import { PrimaryButton } from "../marketplace/common/primary/PrimaryButton";
+import { Card, CardBody, CardHeader, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@nextui-org/react";
+import { PrimaryButton } from "@/components/shared";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useAuthContext } from "@/providers/AuthProvider";
+import toast from "react-hot-toast";
 
 interface Category {
   _id: string;
@@ -34,6 +37,8 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; transactionId?: string }>({ isOpen: false });
+  const [deleting, setDeleting] = useState(false);
 
   const fetchTransactions = useCallback(async () => {
     try {
@@ -58,6 +63,32 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
+
+  const deleteTransaction = async (transactionId: string) => {
+    setDeleting(true);
+    try {
+      const endpoint = type === 'expense' ? 'expenses' : 'income';
+      const response = await fetch(`/api/budgeting/${endpoint}/${transactionId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${state.token}`,
+        },
+      });
+
+      if (response.ok) {
+        toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully`);
+        setDeleteConfirm({ isOpen: false });
+        fetchTransactions();
+      } else {
+        toast.error('Failed to delete transaction');
+      }
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      toast.error('Failed to delete transaction');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
@@ -98,40 +129,49 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
             {transactions.map((transaction) => (
               <div
                 key={transaction._id}
-                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="border rounded-lg p-4 hover:shadow-md transition-shadow flex justify-between items-start"
               >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-3">
-                    {transaction.category && (
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: transaction.category.color }}
-                      />
-                    )}
-                    <h4 className="font-medium">{transaction.note}</h4>
+                <div className="flex-1">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-3">
+                      {transaction.category && (
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: transaction.category.color }}
+                        />
+                      )}
+                      <h4 className="font-medium">{transaction.note}</h4>
+                    </div>
+                    <div className={`font-bold ${type === 'expense' ? 'text-red-600' : 'text-green-600'}`}>
+                      {type === 'expense' ? '-' : '+'}{formatCurrency(transaction.amount)}
+                    </div>
                   </div>
-                  <div className={`font-bold ${type === 'expense' ? 'text-red-600' : 'text-green-600'}`}>
-                    {type === 'expense' ? '-' : '+'}{formatCurrency(transaction.amount)}
-                  </div>
-                </div>
 
-                <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                  {transaction.category && <span>{transaction.category.name}</span>}
-                  <span>{formatDate(transaction.date)}</span>
-                  <span className="capitalize">{transaction.paymentMethod}</span>
-                  {transaction.vendor && <span>Vendor: {transaction.vendor}</span>}
-                  {transaction.client && <span>Client: {transaction.client}</span>}
-                  {transaction.project && <span>Project: {transaction.project}</span>}
-                  {transaction.status && (
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      transaction.status === 'received' ? 'bg-green-100 text-green-800' :
-                      transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {transaction.status}
-                    </span>
-                  )}
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                    {transaction.category && <span>{transaction.category.name}</span>}
+                    <span>{formatDate(transaction.date)}</span>
+                    <span className="capitalize">{transaction.paymentMethod}</span>
+                    {transaction.vendor && <span>Vendor: {transaction.vendor}</span>}
+                    {transaction.client && <span>Client: {transaction.client}</span>}
+                    {transaction.project && <span>Project: {transaction.project}</span>}
+                    {transaction.status && (
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        transaction.status === 'received' ? 'bg-green-100 text-green-800' :
+                        transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {transaction.status}
+                      </span>
+                    )}
+                  </div>
                 </div>
+                <button
+                  onClick={() => setDeleteConfirm({ isOpen: true, transactionId: transaction._id })}
+                  className="ml-4 p-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 rounded transition-colors"
+                  aria-label="Delete transaction"
+                >
+                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                </button>
               </div>
             ))}
 
@@ -162,6 +202,35 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
           </div>
         )}
       </CardBody>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={deleteConfirm.isOpen} onClose={() => setDeleteConfirm({ isOpen: false })}>
+        <ModalContent>
+          <ModalHeader>
+            <h3 className="text-lg font-semibold">Confirm Delete</h3>
+          </ModalHeader>
+          <ModalBody>
+            <p>Are you sure you want to delete this {type}? This action cannot be undone.</p>
+          </ModalBody>
+          <ModalFooter>
+            <PrimaryButton
+              text="Cancel"
+              type="button"
+              color="bg-gray-500"
+              styles="hover:bg-gray-600"
+              onClick={() => setDeleteConfirm({ isOpen: false })}
+            />
+            <PrimaryButton
+              text="Delete"
+              type="button"
+              color="bg-red-600"
+              styles="hover:bg-red-700"
+              isLoading={deleting}
+              onClick={() => deleteConfirm.transactionId && deleteTransaction(deleteConfirm.transactionId)}
+            />
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Card>
   );
 };

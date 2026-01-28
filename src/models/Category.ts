@@ -24,6 +24,15 @@ const CategorySchema = new mongoose.Schema({
     type: String,
     default: '#3B82F6', // Default blue color
   },
+  icon: {
+    type: String,
+    default: null,
+  },
+  iconType: {
+    type: String,
+    enum: ['fontawesome'],
+    default: 'fontawesome',
+  },
   createdAt: {
     type: Date,
     default: Date.now,

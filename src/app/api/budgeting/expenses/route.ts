@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
     const {
       amount,
       note,
+      category,
     } = await request.json();
 
     // Validate required fields
@@ -91,6 +92,7 @@ export async function POST(request: NextRequest) {
       userId: authUser.userId,
       amount: parseFloat(amount),
       note,
+      category: category || null,
       date: new Date(),
     });
 

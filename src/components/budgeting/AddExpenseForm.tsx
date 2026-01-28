@@ -1,9 +1,7 @@
  "use client";
 import { useState, useEffect, useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { PrimaryButton } from "../marketplace/common/primary/PrimaryButton";
-import { PrimaryInput } from "../marketplace/common/primary/PrimaryInput";
-import { PrimaryTextarea } from "../marketplace/common/primary/PrimaryTextarea";
+import { useForm, Controller } from "react-hook-form";
+import { PrimaryButton, PrimaryInput, CategorySelect } from "@/components/shared";
 import { useAuthContext } from "@/providers/AuthProvider";
 import toast from "react-hot-toast";
 
@@ -18,6 +16,7 @@ interface Category {
 interface ExpenseFormData {
   amount: string;
   note: string;
+  category: string;
 }
 
 interface AddExpenseFormProps {
@@ -36,6 +35,7 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm<ExpenseFormData>();
 
   const fetchNotes = useCallback(async () => {
@@ -72,7 +72,11 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
           "Content-Type": "application/json",
           "Authorization": `Bearer ${state.token}`,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          amount: data.amount,
+          note: data.note,
+          category: data.category,
+        }),
       });
 
       const result = await response.json();
@@ -103,6 +107,21 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
           min: { value: 0.01, message: "Amount must be greater than 0" },
         }}
         errors={errors}
+      />
+
+      <Controller
+        name="category"
+        control={control}
+        rules={{ required: "Category is required" }}
+        render={({ field }) => (
+          <CategorySelect
+            value={field.value}
+            onChange={field.onChange}
+            type="expense"
+            label="Category"
+            error={errors.category?.message}
+          />
+        )}
       />
 
       <div>

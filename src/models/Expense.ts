@@ -16,6 +16,10 @@ const ExpenseSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+  },
   date: {
     type: Date,
     required: true,

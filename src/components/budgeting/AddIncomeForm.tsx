@@ -1,15 +1,14 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { PrimaryButton } from "../marketplace/common/primary/PrimaryButton";
-import { PrimaryInput } from "../marketplace/common/primary/PrimaryInput";
-import { PrimaryTextarea } from "../marketplace/common/primary/PrimaryTextarea";
+import { useForm, Controller } from "react-hook-form";
+import { PrimaryButton, PrimaryInput, CategorySelect } from "@/components/shared";
 import { useAuthContext } from "@/providers/AuthProvider";
 import toast from "react-hot-toast";
 
 interface IncomeFormData {
   amount: string;
   note: string;
+  category: string;
 }
 
 interface AddIncomeFormProps {
@@ -28,6 +27,7 @@ export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm<IncomeFormData>();
 
   const fetchNotes = useCallback(async () => {
@@ -68,6 +68,7 @@ export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
         body: JSON.stringify({
           amount: data.amount,
           description: data.note,
+          category: data.category,
           date: new Date(),
           paymentMethod: 'cash',
           status: 'received',
@@ -102,6 +103,21 @@ export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
           min: { value: 0.01, message: "Amount must be greater than 0" },
         }}
         errors={errors}
+      />
+
+      <Controller
+        name="category"
+        control={control}
+        rules={{ required: "Category is required" }}
+        render={({ field }) => (
+          <CategorySelect
+            value={field.value}
+            onChange={field.onChange}
+            type="income"
+            label="Category"
+            error={errors.category?.message}
+          />
+        )}
       />
 
       <div>
