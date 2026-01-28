@@ -5,3 +5,4 @@ export { PrimaryIconBtn } from './PrimaryIconBtn';
 export { IconPicker } from './IconPicker';
 export { CategorySelect } from './CategorySelect';
 export { ThemeSwitch } from './ThemeSwitch';
+export { LanguageSwitcher } from './LanguageSwitcher';

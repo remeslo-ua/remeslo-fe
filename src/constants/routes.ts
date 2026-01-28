@@ -25,6 +25,7 @@ export const ROUTES = {
   HOOKAH_PICKER: {
     HOME: "/apps/hookah-picker",
     PICKER: "/apps/hookah-picker/picker",
+    HISTORY: "/apps/hookah-picker/history",
   },
 
   // Market app (located at /apps/market)
@@ -47,6 +48,10 @@ export const ROUTES = {
       CATEGORIES_MOST_USED: "/api/budgeting/categories/most-used",
       EXPENSES: "/api/budgeting/expenses",
       INCOME: "/api/budgeting/income",
+    },
+    HOOKAH_PICKER: {
+      SUGGESTIONS: "/api/hookah-picker/suggestions",
+      HISTORY: "/api/hookah-picker/history",
     },
   },
 } as const;

@@ -7,6 +7,7 @@ export interface IUser extends mongoose.Document {
   role: 'user' | 'admin';
   accessibleApps: string[];
   theme?: 'light' | 'dark';
+  language?: 'en' | 'uk';
   budgetGoal?: number;
   currencySymbol?: string;
   analyticsTimeRange?: 'month' | 'year' | 'all-time';
@@ -43,6 +44,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['light', 'dark'],
     default: 'light',
+  },
+  language: {
+    type: String,
+    enum: ['en', 'uk'],
+    default: 'en',
   },
   budgetGoal: {
     type: Number,
