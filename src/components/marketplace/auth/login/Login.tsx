@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ROUTES } from "@/constants/routes";
 import { PrimaryInput } from "../../common/primary/PrimaryInput";
 import { PrimaryButton } from "../../common/primary/PrimaryButton";
@@ -38,6 +39,9 @@ export const Login = () => {
     try {
       await authLogin(login, password);
       toast.success("Login successful!");
+      
+      // Note: We can't access the updated user from authLogin directly,
+      // so redirect to home and let the home page handle the redirect
       router.push(ROUTES.HOME);
     } catch (error: any) {
       toast.error(error.message || "Login failed");
@@ -67,8 +71,15 @@ export const Login = () => {
             />
           )
         )}
-        <PrimaryButton text="Login" isLoading={isLoading} />
-      </form>
+        <PrimaryButton text="Login" isLoading={isLoading} />        <p className="text-center text-sm mt-4">
+          Don't have an account?{" "}
+          <Link
+            href={ROUTES.AUTH.REGISTER}
+            className="text-blue-600 hover:text-blue-800 font-semibold"
+          >
+            Register here
+          </Link>
+        </p>      </form>
     </div>
   );
 };

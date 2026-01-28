@@ -7,6 +7,7 @@ import { regInputs } from "./inputs";
 import { PrimaryButton } from "../../common/primary/PrimaryButton";
 import { PrimaryInput } from "../../common/primary/PrimaryInput";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { registerSchema } from "@/constants/validations/authValidations";
 import { ROUTES } from "@/constants/routes";
 import toast from "react-hot-toast";
@@ -84,6 +85,15 @@ export const Register = () => {
           text="Register"
           isDisabled={!!errors.passwordConfirm}
         />
+        <p className="text-center text-sm mt-4">
+          Already have an account?{" "}
+          <Link
+            href={ROUTES.AUTH.LOGIN}
+            className="text-blue-600 hover:text-blue-800 font-semibold"
+          >
+            Login here
+          </Link>
+        </p>
       </form>
     </div>
   );

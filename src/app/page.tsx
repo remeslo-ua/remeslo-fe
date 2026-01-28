@@ -2,9 +2,20 @@
 import { useAuthContext } from "@/providers/AuthProvider";
 import { AppsSection } from "../components/AppsSection";
 import { Nav } from "@/components/marketplace/nav/Nav";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 
 export default function Home() {
   const { state } = useAuthContext();
+  const router = useRouter();
+
+  // Redirect to budgeting app if user only has budgeting app accessible
+  useEffect(() => {
+    if (state.user && state.user.accessibleApps.length === 1 && state.user.accessibleApps.includes('budgeting')) {
+      router.push(ROUTES.BUDGETING.HOME);
+    }
+  }, [state.user, router]);
 
   return (
     <main>
