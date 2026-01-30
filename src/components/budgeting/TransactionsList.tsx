@@ -5,6 +5,7 @@ import { PrimaryButton } from "@/components/shared";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useAuthContext } from "@/providers/AuthProvider";
+import { useTranslations } from "@/hooks";
 import toast from "react-hot-toast";
 
 interface Category {
@@ -33,6 +34,7 @@ interface TransactionsListProps {
 
 export const TransactionsList = ({ type, title }: TransactionsListProps) => {
   const { state } = useAuthContext();
+  const t = useTranslations();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -76,15 +78,15 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
       });
 
       if (response.ok) {
-        toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully`);
+        toast.success(t('budgeting.deletedSuccessfully', '{type} deleted successfully').replace('{type}', type.charAt(0).toUpperCase() + type.slice(1)));
         setDeleteConfirm({ isOpen: false });
         fetchTransactions();
       } else {
-        toast.error('Failed to delete transaction');
+        toast.error(t('budgeting.failedToDelete', 'Failed to delete transaction'));
       }
     } catch (error) {
       console.error('Error deleting transaction:', error);
-      toast.error('Failed to delete transaction');
+      toast.error(t('budgeting.failedToDelete', 'Failed to delete transaction'));
     } finally {
       setDeleting(false);
     }
@@ -108,7 +110,7 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
           <h3 className="text-xl font-semibold">{title}</h3>
         </CardHeader>
         <CardBody>
-          <div className="text-center py-8">Loading...</div>
+          <div className="text-center py-8">{t('common.loading', 'Loading...')}</div>
         </CardBody>
       </Card>
     );
@@ -122,7 +124,7 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
       <CardBody>
         {transactions.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No {type}s recorded yet. Add your first {type} above.
+            {type === 'expense' ? t('budgeting.noExpensesYet', 'No expenses recorded yet. Add your first expense above.') : t('budgeting.noIncomeYet', 'No income recorded yet. Add your first income above.')}
           </div>
         ) : (
           <div className="space-y-4">
@@ -151,16 +153,18 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
                     {transaction.category && <span>{transaction.category.name}</span>}
                     <span>{formatDate(transaction.date)}</span>
                     <span className="capitalize">{transaction.paymentMethod}</span>
-                    {transaction.vendor && <span>Vendor: {transaction.vendor}</span>}
-                    {transaction.client && <span>Client: {transaction.client}</span>}
-                    {transaction.project && <span>Project: {transaction.project}</span>}
+                    {transaction.vendor && <span>{t('budgeting.vendor', 'Vendor')}: {transaction.vendor}</span>}
+                    {transaction.client && <span>{t('budgeting.client', 'Client')}: {transaction.client}</span>}
+                    {transaction.project && <span>{t('budgeting.project', 'Project')}: {transaction.project}</span>}
                     {transaction.status && (
                       <span className={`px-2 py-1 rounded text-xs ${
                         transaction.status === 'received' ? 'bg-green-100 text-green-800' :
                         transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                         'bg-red-100 text-red-800'
                       }`}>
-                        {transaction.status}
+                        {transaction.status === 'received' ? t('budgeting.received', 'Received') :
+                         transaction.status === 'pending' ? t('budgeting.pending', 'Pending') :
+                         transaction.status}
                       </span>
                     )}
                   </div>
@@ -179,7 +183,7 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
             {totalPages > 1 && (
               <div className="flex justify-center gap-2 mt-6">
                 <PrimaryButton
-                  text="Previous"
+                  text={t('common.previous', 'Previous')}
                   type="button"
                   color="bg-gray-500"
                   styles="hover:bg-gray-600"
@@ -187,10 +191,10 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
                   isDisabled={page === 1}
                 />
                 <span className="px-4 py-2 bg-gray-100 rounded">
-                  Page {page} of {totalPages}
+                  {t('budgeting.pageOf', 'Page {page} of {total}').replace('{page}', page.toString()).replace('{total}', totalPages.toString())}
                 </span>
                 <PrimaryButton
-                  text="Next"
+                  text={t('common.next', 'Next')}
                   type="button"
                   color="bg-gray-500"
                   styles="hover:bg-gray-600"
@@ -207,21 +211,21 @@ export const TransactionsList = ({ type, title }: TransactionsListProps) => {
       <Modal isOpen={deleteConfirm.isOpen} onClose={() => setDeleteConfirm({ isOpen: false })}>
         <ModalContent>
           <ModalHeader>
-            <h3 className="text-lg font-semibold">Confirm Delete</h3>
+            <h3 className="text-lg font-semibold">{t('budgeting.confirmDelete', 'Confirm Delete')}</h3>
           </ModalHeader>
           <ModalBody>
-            <p>Are you sure you want to delete this {type}? This action cannot be undone.</p>
+            <p>{t('budgeting.areYouSureDelete', 'Are you sure you want to delete this {type}? This action cannot be undone.').replace('{type}', type)}</p>
           </ModalBody>
           <ModalFooter>
             <PrimaryButton
-              text="Cancel"
+              text={t('common.cancel', 'Cancel')}
               type="button"
               color="bg-gray-500"
               styles="hover:bg-gray-600"
               onClick={() => setDeleteConfirm({ isOpen: false })}
             />
             <PrimaryButton
-              text="Delete"
+              text={t('common.delete', 'Delete')}
               type="button"
               color="bg-red-600"
               styles="hover:bg-red-700"

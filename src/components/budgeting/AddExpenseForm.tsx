@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { PrimaryButton, PrimaryInput, CategorySelect } from "@/components/shared";
 import { useAuthContext } from "@/providers/AuthProvider";
+import { useTranslations } from "@/hooks";
 import toast from "react-hot-toast";
 
 interface Category {
@@ -26,6 +27,7 @@ interface AddExpenseFormProps {
 
 export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => {
   const { state } = useAuthContext();
+  const t = useTranslations();
   const [notes, setNotes] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [notesFetched, setNotesFetched] = useState(false);
@@ -82,14 +84,14 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to add expense");
+        throw new Error(result.error || t('budgeting.failedToAddExpense', 'Failed to add expense'));
       }
 
-      toast.success("Expense added successfully!");
+      toast.success(t('budgeting.expenseAddedSuccessfully', 'Expense added successfully!'));
       reset();
       onSuccess?.();
     } catch (error: any) {
-      toast.error(error.message || "Failed to add expense");
+      toast.error(error.message || t('budgeting.failedToAddExpense', 'Failed to add expense'));
     } finally {
       setIsLoading(false);
     }
@@ -99,12 +101,12 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <PrimaryInput
         name="amount"
-        label="Expense Amount"
+        label={t('budgeting.expenseAmount', 'Expense Amount')}
         type="number"
         register={register}
         validation={{
-          required: "Amount is required",
-          min: { value: 0.01, message: "Amount must be greater than 0" },
+          required: t('budgeting.amountRequired', 'Amount is required'),
+          min: { value: 0.01, message: t('budgeting.amountMustBeGreater', 'Amount must be greater than 0') },
         }}
         errors={errors}
       />
@@ -112,25 +114,25 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
       <Controller
         name="category"
         control={control}
-        rules={{ required: "Category is required" }}
+        rules={{ required: t('budgeting.categoryRequired', 'Category is required') }}
         render={({ field }) => (
           <CategorySelect
             value={field.value}
             onChange={field.onChange}
             type="expense"
-            label="Category"
+            label={t('budgeting.category', 'Category')}
             error={errors.category?.message}
           />
         )}
       />
 
       <div>
-        <label className="block text-sm font-medium mb-1">Note</label>
+        <label className="block text-sm font-medium mb-1">{t('budgeting.note', 'Note')}</label>
         <input
-          {...register("note", { required: "Note is required" })}
+          {...register("note", { required: t('budgeting.noteRequired', 'Note is required') })}
           list="notes-list"
           className="w-full p-2 border rounded-md"
-          placeholder="Enter a note for this expense"
+          placeholder={t('budgeting.enterNote', 'Enter a note for this {type}').replace('{type}', t('budgeting.expenses', 'expense').toLowerCase())}
         />
         <datalist id="notes-list">
           {notes.map((note, index) => (
@@ -145,7 +147,7 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
       <div className="flex gap-4 justify-end">
         {onCancel && (
           <PrimaryButton
-            text="Cancel"
+            text={t('common.cancel', 'Cancel')}
             type="button"
             color="bg-gray-500"
             styles="hover:bg-gray-600"
@@ -153,7 +155,7 @@ export const AddExpenseForm = ({ onSuccess, onCancel }: AddExpenseFormProps) => 
           />
         )}
         <PrimaryButton
-          text="Add Expense"
+          text={t('budgeting.expenseAddButtonText', 'Add Expense')}
           type="submit"
           isLoading={isLoading}
           color="bg-red-500"

@@ -4,6 +4,7 @@ import { Card, CardBody, CardHeader, Select, SelectItem } from "@nextui-org/reac
 import { Chart } from "react-google-charts";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useTheme } from "@/providers/ThemeProvider";
+import { useTranslations } from "@/hooks";
 
 interface FinancialSummary {
   totalIncome: number;
@@ -19,6 +20,7 @@ interface UserSettings {
 export const Dashboard = () => {
   const { state } = useAuthContext();
   const { theme } = useTheme();
+  const t = useTranslations();
   const [summary, setSummary] = useState<FinancialSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<UserSettings>({
@@ -101,9 +103,9 @@ export const Dashboard = () => {
     })}`;
   };
 
-  const getTimeRangeLabel = () => 'This Month';
+  const getTimeRangeLabel = () => t('budgeting.thisMonth', 'This Month');
 
-  if (loading || !summary) return <div>Loading...</div>;
+  if (loading || !summary) return <div>{t('common.loading', 'Loading...')}</div>;
 
   const budgetGoal = settings.budgetGoal || 0;
   const hasBudgetGoal = settings.budgetGoal !== null && settings.budgetGoal > 0;
@@ -114,7 +116,7 @@ export const Dashboard = () => {
   ];
 
   const options = {
-    title: `Income vs Expenses (${getTimeRangeLabel()})`,
+    title: `${t('budgeting.incomeVsExpenses', 'Income vs Expenses')} (${getTimeRangeLabel()})`,
     colors: ['#10B981', '#EF4444', '#7b818a'],
     legend: { position: "bottom" as const },
     backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
@@ -154,16 +156,16 @@ export const Dashboard = () => {
       {hasBudgetGoal && (
         <Card>
           <CardHeader>
-            <h4 className="text-lg font-semibold text-blue-600">Monthly Budget Goal</h4>
+            <h4 className="text-lg font-semibold text-blue-600">{t('budgeting.monthlyBudgetGoal', 'Monthly Budget Goal')}</h4>
           </CardHeader>
           <CardBody>
             <p className="text-2xl font-bold text-blue-600">
               {formatCurrency(budgetGoal)}
             </p>
-            <p className="text-sm text-gray-500">Target for this month</p>
+            <p className="text-sm text-gray-500">{t('budgeting.targetForThisMonth', 'Target for this month')}</p>
             <div className="mt-2">
               <p className="text-sm">
-                Remaining: {formatCurrency(Math.max(budgetGoal - summary.totalExpenses, 0))}
+                {t('budgeting.remaining', 'Remaining')}: {formatCurrency(Math.max(budgetGoal - summary.totalExpenses, 0))}
               </p>
               <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
                 <div
@@ -175,7 +177,7 @@ export const Dashboard = () => {
               </div>
               {summary.totalExpenses > budgetGoal && (
                 <p className="text-sm text-red-600 mt-1">
-                  Over budget by {formatCurrency(summary.totalExpenses - budgetGoal)}
+                  {t('budgeting.overBudgetBy', 'Over budget by')} {formatCurrency(summary.totalExpenses - budgetGoal)}
                 </p>
               )}
             </div>

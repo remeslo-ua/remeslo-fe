@@ -1,18 +1,39 @@
 "use client";
 
+import { Select, SelectItem } from "@nextui-org/react";
+import { useTranslations } from "@/hooks";
 import { useLanguage } from "@/providers/LanguageProvider";
+import { useTheme } from "@/providers/ThemeProvider";
 
 export const LanguageSwitcher = () => {
   const { language, setLanguage } = useLanguage();
+  const { theme } = useTheme();
+  const t = useTranslations();
 
   return (
-    <select
-      value={language}
+    <Select
+      selectedKeys={[language]}
       onChange={(e) => setLanguage(e.target.value as "en" | "uk")}
-      className="px-3 py-2 border border-gray-300 rounded-lg bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer font-medium text-sm"
+      variant="bordered"
+      aria-label={t("common.language", "Language")}
+      classNames={{
+        trigger: [
+          "border-2",
+          "h-10",
+          "rounded-lg",
+          theme === "dark"
+            ? "bg-gray-800 text-white border-gray-700"
+            : "bg-white text-black border-gray-300",
+        ],
+        value: [theme === "dark" ? "text-white" : "text-black"],
+      }}
     >
-      <option value="en">English</option>
-      <option value="uk">Українська</option>
-    </select>
+      <SelectItem key="en" value="en">
+        {t("common.english", "English")}
+      </SelectItem>
+      <SelectItem key="uk" value="uk">
+        {t("common.ukrainian", "Українська")}
+      </SelectItem>
+    </Select>
   );
 };

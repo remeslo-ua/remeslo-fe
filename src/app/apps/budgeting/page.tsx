@@ -1,14 +1,12 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TransactionsList } from "../../../components/budgeting/TransactionsList";
 import { Dashboard } from "../../../components/budgeting/Dashboard";
-import { BudgetSettings } from "../../../components/budgeting/BudgetSettings";
 import AuthGuard from "../../../components/AuthGuard";
 import { ROUTES } from "@/constants/routes";
+import { useTranslations } from "@/hooks";
 
 interface Category {
   _id: string;
@@ -19,12 +17,7 @@ interface Category {
 }
 
 export default function BudgetingPage() {
-  const [showSettings, setShowSettings] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleSettingsUpdate = () => {
-    setRefreshKey(prev => prev + 1);
-  };
+  const t = useTranslations();
 
   return (
     <AuthGuard>
@@ -32,14 +25,14 @@ export default function BudgetingPage() {
         <div className="max-w-6xl mx-auto">
           {/* Header with Settings Button */}
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold">Budgeting</h1>
-            <button
-              onClick={() => setShowSettings(true)}
+            <h1 className="text-3xl md:text-4xl font-bold">{t('budgeting.budgeting', 'Budgeting')}</h1>
+            <Link
+              href={ROUTES.BUDGETING.SETTINGS}
               className="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              aria-label="Settings"
+              aria-label={t('common.settings', 'Settings')}
             >
               <FontAwesomeIcon icon={faGear} className="w-5 h-5 text-black dark:text-white" />
-            </button>
+            </Link>
           </div>
           <div className="flex justify-center gap-4 md:gap-6 mb-8">
             <Link href={ROUTES.BUDGETING.ADD_EXPENSE}>
@@ -54,33 +47,14 @@ export default function BudgetingPage() {
             </Link>
           </div>
 
-          <Dashboard key={refreshKey} />
+          <Dashboard />
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-8">
-            <TransactionsList type="expense" title="Recent Expenses" />
-            <TransactionsList type="income" title="Recent Income" />
+            <TransactionsList type="expense" title={t('budgeting.recentExpenses', 'Recent Expenses')} />
+            <TransactionsList type="income" title={t('budgeting.recentIncome', 'Recent Income')} />
           </div>
         </div>
 
-        {/* Settings Modal */}
-        <Modal 
-          isOpen={showSettings} 
-          onClose={() => setShowSettings(false)}
-          size="3xl"
-          scrollBehavior="inside"
-        >
-          <ModalContent>
-            <ModalHeader>
-              <h2 className="text-2xl font-bold">Budget Settings</h2>
-            </ModalHeader>
-            <ModalBody className="pb-6">
-              <BudgetSettings 
-                onClose={() => setShowSettings(false)} 
-                onUpdate={handleSettingsUpdate}
-              />
-            </ModalBody>
-          </ModalContent>
-        </Modal>
       </div>
     </AuthGuard>
   );

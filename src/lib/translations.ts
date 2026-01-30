@@ -1,24 +1,11 @@
 import { Language } from "@/types/Language";
+import enTranslations from "../../public/locales/en.json";
+import ukTranslations from "../../public/locales/uk.json";
 
-let translations: Record<Language, any> = {
-  en: {},
-  uk: {},
+const translations: Record<Language, any> = {
+  en: enTranslations,
+  uk: ukTranslations,
 };
-
-// Load translations
-async function loadTranslations() {
-  try {
-    const en = await fetch("/locales/en.json").then((r) => r.json());
-    const uk = await fetch("/locales/uk.json").then((r) => r.json());
-    translations.en = en;
-    translations.uk = uk;
-  } catch (error) {
-    console.error("Failed to load translations:", error);
-  }
-}
-
-// Initialize on load
-loadTranslations();
 
 export function getTranslation(
   lang: Language,

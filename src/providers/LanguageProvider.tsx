@@ -77,10 +77,6 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  if (isLoading) {
-    return <>{children}</>;
-  }
-
   return (
     <LanguageContext.Provider value={{ language, setLanguage }}>
       {children}

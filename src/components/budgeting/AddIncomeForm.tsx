@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { PrimaryButton, PrimaryInput, CategorySelect } from "@/components/shared";
 import { useAuthContext } from "@/providers/AuthProvider";
+import { useTranslations } from "@/hooks";
 import toast from "react-hot-toast";
 
 interface IncomeFormData {
@@ -18,6 +19,7 @@ interface AddIncomeFormProps {
 
 export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
   const { state } = useAuthContext();
+  const t = useTranslations();
   const [notes, setNotes] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [notesFetched, setNotesFetched] = useState(false);
@@ -78,14 +80,14 @@ export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to add income");
+        throw new Error(result.error || t('budgeting.failedToAddIncome', 'Failed to add income'));
       }
 
-      toast.success("Income added successfully!");
+      toast.success(t('budgeting.incomeAddedSuccessfully', 'Income added successfully!'));
       reset();
       onSuccess?.();
     } catch (error: any) {
-      toast.error(error.message || "Failed to add income");
+      toast.error(error.message || t('budgeting.failedToAddIncome', 'Failed to add income'));
     } finally {
       setIsLoading(false);
     }
@@ -95,12 +97,12 @@ export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <PrimaryInput
         name="amount"
-        label="Income Amount"
+        label={t('budgeting.incomeAmount', 'Income Amount')}
         type="number"
         register={register}
         validation={{
-          required: "Amount is required",
-          min: { value: 0.01, message: "Amount must be greater than 0" },
+          required: t('budgeting.amountRequired', 'Amount is required'),
+          min: { value: 0.01, message: t('budgeting.amountMustBeGreater', 'Amount must be greater than 0') },
         }}
         errors={errors}
       />
@@ -108,25 +110,25 @@ export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
       <Controller
         name="category"
         control={control}
-        rules={{ required: "Category is required" }}
+        rules={{ required: t('budgeting.categoryRequired', 'Category is required') }}
         render={({ field }) => (
           <CategorySelect
             value={field.value}
             onChange={field.onChange}
             type="income"
-            label="Category"
+            label={t('budgeting.category', 'Category')}
             error={errors.category?.message}
           />
         )}
       />
 
       <div>
-        <label className="block text-sm font-medium mb-1">Note</label>
+        <label className="block text-sm font-medium mb-1">{t('budgeting.note', 'Note')}</label>
         <input
-          {...register("note", { required: "Note is required" })}
+          {...register("note", { required: t('budgeting.noteRequired', 'Note is required') })}
           list="notes-list"
           className="w-full p-2 border rounded-md"
-          placeholder="Enter a note for this income"
+          placeholder={t('budgeting.enterNote', 'Enter a note for this {type}').replace('{type}', t('budgeting.income', 'income').toLowerCase())}
         />
         <datalist id="notes-list">
           {notes.map((note, index) => (
@@ -141,7 +143,7 @@ export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
       <div className="flex gap-4 justify-end">
         {onCancel && (
           <PrimaryButton
-            text="Cancel"
+            text={t('common.cancel', 'Cancel')}
             type="button"
             color="bg-gray-500"
             styles="hover:bg-gray-600"
@@ -149,7 +151,7 @@ export const AddIncomeForm = ({ onSuccess, onCancel }: AddIncomeFormProps) => {
           />
         )}
         <PrimaryButton
-          text="Add Income"
+          text={t('budgeting.incomeAddButtonText', 'Add Income')}
           type="submit"
           isLoading={isLoading}
           color="bg-green-500"

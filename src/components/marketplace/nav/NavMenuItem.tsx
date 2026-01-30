@@ -12,8 +12,8 @@ export const NavMenuItem: React.FC<Props> = ({ item }) => {
   const { logout } = useAuthContext();
   const router = useRouter();
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
+    logout();
     router.push(ROUTES.HOME);
   };
 

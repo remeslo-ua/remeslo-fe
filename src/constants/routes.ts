@@ -19,6 +19,7 @@ export const ROUTES = {
     HOME: "/apps/budgeting",
     ADD_EXPENSE: "/apps/budgeting/add-expense",
     ADD_INCOME: "/apps/budgeting/add-income",
+    SETTINGS: "/apps/budgeting/settings",
   },
 
   // Hookah Picker app (located at /apps/hookah-picker)
