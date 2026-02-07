@@ -163,37 +163,44 @@ export const Dashboard = () => {
         options={options}
       />
       </Card>
-      {/* Budget Goal Card */}
-      {hasBudgetGoal && (
-        <Card>
-          <CardHeader>
-            <h4 className="text-lg font-semibold text-blue-600">{t('budgeting.monthlyBudgetGoal', 'Monthly Budget Goal')}</h4>
-          </CardHeader>
-          <CardBody>
-            <p className="text-2xl font-bold text-blue-600">
-              {formatCurrency(budgetGoal)}
-            </p>
-            <p className="text-sm text-gray-500">{t('budgeting.targetForThisMonth', 'Target for this month')}</p>
-            <div className="mt-2">
-              <p className="text-sm">
-                {t('budgeting.remaining', 'Remaining')}: {formatCurrency(Math.max(budgetGoal - summary.totalExpenses, 0))}
+      {/* Monthly Overview Card */}
+      <Card>
+        <CardHeader>
+          <h4 className="text-lg font-semibold">Monthly Overview</h4>
+        </CardHeader>
+        <CardBody className="space-y-6">
+          {hasBudgetGoal && (
+            <div>
+              <h5 className="text-md font-semibold text-blue-600 mb-2">
+                {t('budgeting.monthlyBudgetGoal', 'Monthly Budget Goal')}
+              </h5>
+              <p className="text-2xl font-bold text-blue-600">
+                {formatCurrency(budgetGoal)}
               </p>
-              <div className="w-full bg-gray-200 rounded-full h-2.5">
-                <div
-                  className={`h-2.5 rounded-full ${
-                    summary.totalExpenses > budgetGoal ? 'bg-red-600' : 'bg-blue-600'
-                  }`}
-                  style={{ width: `${Math.min((summary.totalExpenses / budgetGoal) * 100, 100)}%` }}
-                ></div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                {Math.min(percentBudgetUsed, 100).toFixed(1)}% of budget used
+              <p className="text-sm text-gray-500">
+                {t('budgeting.targetForThisMonth', 'Target for this month')}
               </p>
-              {summary.totalExpenses > budgetGoal && (
-                <p className="text-sm text-red-600 mt-1">
-                  {t('budgeting.overBudgetBy', 'Over budget by')} {formatCurrency(summary.totalExpenses - budgetGoal)}
+              <div className="mt-2">
+                <p className="text-sm">
+                  {t('budgeting.remaining', 'Remaining')}: {formatCurrency(Math.max(budgetGoal - summary.totalExpenses, 0))}
                 </p>
-              )}
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className={`h-2.5 rounded-full ${
+                      summary.totalExpenses > budgetGoal ? 'bg-red-600' : 'bg-blue-600'
+                    }`}
+                    style={{ width: `${Math.min((summary.totalExpenses / budgetGoal) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  {Math.min(percentBudgetUsed, 100).toFixed(1)}% of budget used
+                </p>
+                {summary.totalExpenses > budgetGoal && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {t('budgeting.overBudgetBy', 'Over budget by')} {formatCurrency(summary.totalExpenses - budgetGoal)}
+                  </p>
+                )}
+              </div>
               <hr className="my-4" />
             </div>
           )}
