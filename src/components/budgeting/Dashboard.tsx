@@ -11,6 +11,12 @@ interface FinancialSummary {
   totalExpenses: number;
 }
 
+interface CategorySpending {
+  name: string;
+  color: string;
+  total: number;
+}
+
 interface UserSettings {
   budgetGoal: number | null;
   currencySymbol: string;
@@ -22,6 +28,7 @@ export const Dashboard = () => {
   const { theme } = useTheme();
   const t = useTranslations();
   const [summary, setSummary] = useState<FinancialSummary | null>(null);
+  const [categorySpending, setCategorySpending] = useState<CategorySpending[]>([]);
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<UserSettings>({
     budgetGoal: null,
@@ -54,14 +61,30 @@ export const Dashboard = () => {
   const fetchSummary = useCallback(async () => {
     try {
       const currentDate = new Date();
-      const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      let startDate: Date | null = null;
+      let endDate: Date | null = null;
+
+      if (timeRange === 'month') {
+        startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      } else if (timeRange === 'year') {
+        startDate = new Date(currentDate.getFullYear(), 0, 1);
+        endDate = new Date(currentDate.getFullYear(), 11, 31);
+      }
+
+      const dateParams = new URLSearchParams();
+      if (startDate) dateParams.set('startDate', startDate.toISOString());
+      if (endDate) dateParams.set('endDate', endDate.toISOString());
+
+      const paramsString = dateParams.toString();
+      const expensesUrl = `/api/budgeting/expenses?limit=1000${paramsString ? `&${paramsString}` : ''}`;
+      const incomeUrl = `/api/budgeting/income?limit=1000${paramsString ? `&${paramsString}` : ''}`;
 
       const [expensesRes, incomeRes] = await Promise.all([
-        fetch(`/api/budgeting/expenses?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`, {
+        fetch(expensesUrl, {
           headers: { "Authorization": `Bearer ${state.token}` },
         }),
-        fetch(`/api/budgeting/income?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`, {
+        fetch(incomeUrl, {
           headers: { "Authorization": `Bearer ${state.token}` },
         }),
       ]);
@@ -78,6 +101,23 @@ export const Dashboard = () => {
           totalIncome,
           totalExpenses,
         });
+
+        const spendingMap = new Map<string, CategorySpending>();
+        expensesData.expenses.forEach((expense: any) => {
+          const categoryKey = expense.category?._id || 'uncategorized';
+          const categoryName = expense.category?.name || t('budgeting.uncategorized', 'Uncategorized');
+          const categoryColor = expense.category?.color || '#9CA3AF';
+          const existing = spendingMap.get(categoryKey) || {
+            name: categoryName,
+            color: categoryColor,
+            total: 0,
+          };
+          existing.total += expense.amount;
+          spendingMap.set(categoryKey, existing);
+        });
+
+        const spendingList = Array.from(spendingMap.values()).sort((a, b) => b.total - a.total);
+        setCategorySpending(spendingList);
       }
     } catch (error) {
       console.error("Error fetching summary:", error);
@@ -103,7 +143,15 @@ export const Dashboard = () => {
     })}`;
   };
 
-  const getTimeRangeLabel = () => t('budgeting.thisMonth', 'This Month');
+  const getTimeRangeLabel = () => {
+    if (timeRange === 'year') {
+      return t('budgeting.year', 'Year');
+    }
+    if (timeRange === 'all-time') {
+      return t('budgeting.allTime', 'All Time');
+    }
+    return t('budgeting.month', 'Month');
+  };
 
   if (loading || !summary) return <div>{t('common.loading', 'Loading...')}</div>;
 
@@ -113,6 +161,11 @@ export const Dashboard = () => {
   const chartData = [
     ['Category', 'Income', 'Expenses', ...(hasBudgetGoal ? ['Budget Goal'] : [])],
     ['', summary.totalIncome, summary.totalExpenses, ...(hasBudgetGoal ? [budgetGoal] : [])],
+  ];
+
+  const spendingChartData = [
+    [t('budgeting.category', 'Category'), t('budgeting.spending', 'Spending')],
+    ...categorySpending.map((entry) => [entry.name, entry.total]),
   ];
 
   const options = {
@@ -152,6 +205,30 @@ export const Dashboard = () => {
         options={options}
       />
       </Card>
+      {categorySpending.length > 0 && (
+        <Card>
+          <CardHeader>
+            <h4 className="text-lg font-semibold">
+              {t('budgeting.spendingByCategory', 'Spending by Category')}
+            </h4>
+          </CardHeader>
+          <CardBody>
+            <Chart
+              chartType="PieChart"
+              width="100%"
+              height="380px"
+              data={spendingChartData}
+              options={{
+                legend: { position: 'right' as const },
+                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+                pieHole: 0.35,
+                chartArea: { width: '85%', height: '85%' },
+                colors: categorySpending.map((entry) => entry.color),
+              }}
+            />
+          </CardBody>
+        </Card>
+      )}
       {/* Budget Goal Card */}
       {hasBudgetGoal && (
         <Card>
@@ -163,6 +240,11 @@ export const Dashboard = () => {
               {formatCurrency(budgetGoal)}
             </p>
             <p className="text-sm text-gray-500">{t('budgeting.targetForThisMonth', 'Target for this month')}</p>
+            {timeRange === 'month' && (
+              <p className="text-sm text-gray-500">
+                {t('budgeting.daysLeftInMonth', '{count} days left in this month').replace('{count}', getDaysLeftInMonth().toString())}
+              </p>
+            )}
             <div className="mt-2">
               <p className="text-sm">
                 {t('budgeting.remaining', 'Remaining')}: {formatCurrency(Math.max(budgetGoal - summary.totalExpenses, 0))}

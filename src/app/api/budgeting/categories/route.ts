@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
         { userId: authUser.userId }, // User's custom categories
         { isDefault: true } // Default categories
       ]
-    }).sort({ type: 1, name: 1 });
+    }).sort({ type: 1, isDefault: 1, name: 1 });
 
     console.log('Found categories:', categories.length);
 

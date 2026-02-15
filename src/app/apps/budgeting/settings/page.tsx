@@ -19,7 +19,7 @@ export default function BudgetingSettingsPage() {
       <div className="min-h-screen p-8">
         <div className="max-w-3xl mx-auto">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push(ROUTES.BUDGETING.HOME)}
             className="mb-4 text-gray-600 hover:text-gray-800 active:bg-gray-200 active:text-gray-900 p-2 rounded flex items-center"
           >
             <span className="text-xl mr-2">{"<"}</span> {t("common.back", "Back")}

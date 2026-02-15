@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import {
   Card,
   CardBody,
   CardHeader,
-  Select,
-  SelectItem,
 } from "@nextui-org/react";
 import {
   PrimaryButton,
@@ -15,13 +14,13 @@ import {
   LanguageSwitcher,
 } from "@/components/shared";
 import { CategoryManager } from "./CategoryManager";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useTranslations } from "@/hooks";
 import toast from "react-hot-toast";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 
 interface SettingsFormData {
-  budgetGoal: string;
   currencySymbol: string;
   analyticsTimeRange: "month" | "year" | "all-time";
 }
@@ -47,7 +46,6 @@ export const BudgetSettings = ({ onClose, onUpdate }: BudgetSettingsProps) => {
     control,
   } = useForm<SettingsFormData>({
     defaultValues: {
-      budgetGoal: "",
       currencySymbol: "$",
       analyticsTimeRange: "month",
     },
@@ -65,7 +63,6 @@ export const BudgetSettings = ({ onClose, onUpdate }: BudgetSettingsProps) => {
     if (cached) {
       try {
         const data = JSON.parse(cached);
-        setValue("budgetGoal", data.budgetGoal?.toString() || "");
         setValue("currencySymbol", data.currencySymbol || "$");
         setValue("analyticsTimeRange", data.analyticsTimeRange || "month");
         setLoading(false);
@@ -90,11 +87,9 @@ export const BudgetSettings = ({ onClose, onUpdate }: BudgetSettingsProps) => {
       if (response.ok) {
         const data = await response.json();
         if (isMountedRef.current) {
-          setValue("budgetGoal", data.budgetGoal?.toString() || "");
           setValue("currencySymbol", data.currencySymbol || "$");
           setValue("analyticsTimeRange", data.analyticsTimeRange || "month");
           localStorage.setItem(cacheKey, JSON.stringify({
-            budgetGoal: data.budgetGoal ?? "",
             currencySymbol: data.currencySymbol || "$",
             analyticsTimeRange: data.analyticsTimeRange || "month",
           }));
@@ -123,7 +118,6 @@ export const BudgetSettings = ({ onClose, onUpdate }: BudgetSettingsProps) => {
           Authorization: `Bearer ${state.token}`,
         },
         body: JSON.stringify({
-          budgetGoal: data.budgetGoal ? parseFloat(data.budgetGoal) : null,
           currencySymbol: data.currencySymbol,
           analyticsTimeRange: data.analyticsTimeRange,
         }),
@@ -140,7 +134,6 @@ export const BudgetSettings = ({ onClose, onUpdate }: BudgetSettingsProps) => {
         ),
       );
       localStorage.setItem(cacheKey, JSON.stringify({
-        budgetGoal: data.budgetGoal ?? "",
         currencySymbol: data.currencySymbol,
         analyticsTimeRange: data.analyticsTimeRange,
       }));
@@ -183,32 +176,27 @@ export const BudgetSettings = ({ onClose, onUpdate }: BudgetSettingsProps) => {
               <ThemeSwitch />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <PrimaryInput
-                  name="budgetGoal"
-                  label={t("budgeting.budgetGoal", "Monthly Budget Goal")}
-                  type="number"
-                  register={register}
-                  validation={{
-                    min: {
-                      value: 0,
-                      message: t(
-                        "budgeting.budgetMustBePositive",
-                        "Budget must be positive",
-                      ),
-                    },
-                  }}
-                  errors={errors}
-                />
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {t(
-                    "budgeting.budgetGoalDescription",
-                    "Set your monthly budget goal to track spending",
-                  )}
-                </p>
-              </div>
+            {/* Goals Management Link */}
+            <Link href="/apps/budgeting/goals">
+              <Card className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 hover:shadow-lg transition cursor-pointer border-0">
+                <CardBody className="flex flex-row items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      {t("budgeting.budgetingGoals", "Budgeting Goals")}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {t(
+                        "budgeting.manageGoalsDescription",
+                        "Set overall and category-specific budget goals",
+                      )}
+                    </p>
+                  </div>
+                  <ChevronRightIcon className="w-5 h-5 text-blue-500" />
+                </CardBody>
+              </Card>
+            </Link>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <PrimaryInput
                   name="currencySymbol"

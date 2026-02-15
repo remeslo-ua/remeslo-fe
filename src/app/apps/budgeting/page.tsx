@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { TransactionsList } from "../../../components/budgeting/TransactionsList";
+import { TransactionsFeed } from "../../../components/budgeting/TransactionsFeed";
 import { Dashboard } from "../../../components/budgeting/Dashboard";
 import AuthGuard from "../../../components/AuthGuard";
 import { ROUTES } from "@/constants/routes";
@@ -49,9 +49,8 @@ export default function BudgetingPage() {
 
           <Dashboard />
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-8">
-            <TransactionsList type="expense" title={t('budgeting.recentExpenses', 'Recent Expenses')} />
-            <TransactionsList type="income" title={t('budgeting.recentIncome', 'Recent Income')} />
+          <div className="mt-8">
+            <TransactionsFeed title={t('budgeting.recentTransactions', 'Recent Transactions')} />
           </div>
         </div>
 

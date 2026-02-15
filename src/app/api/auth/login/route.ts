@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 
+import dns from "node:dns/promises";
+dns.setServers(["1.1.1.1"]);
+
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function POST(request: NextRequest) {

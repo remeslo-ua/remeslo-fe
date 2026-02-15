@@ -77,17 +77,19 @@ interface Props {
 
 export const IconPicker: React.FC<Props> = ({ value, onChange, label = 'Icon', error }) => {
   return (
-    <div className="mb-5">
+    <div className="mb-5 w-full">
       <Select
         label={label}
         selectedKeys={value ? [value] : []}
         onChange={(e) => onChange(e.target.value)}
         variant="bordered"
+        fullWidth
         classNames={{
           trigger: [
             'border-2 border-black-200 h-[62px] bg-[#FFFFFF]',
             error && 'border-danger-D300 bg-[#F7E8E8]',
           ],
+          listboxWrapper: 'min-h-[300px] max-h-96',
         }}
         renderValue={(items) => {
           return items.map((item) => {

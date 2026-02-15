@@ -128,12 +128,13 @@ export const CategorySelect: React.FC<Props> = ({
   };
 
   return (
-    <div className="mb-5">
+    <div className="mb-5 w-full">
       <Select
         label={label}
         selectedKeys={value ? [value] : []}
         onChange={(e) => onChange(e.target.value)}
         variant="bordered"
+        fullWidth
         isLoading={loading}
         size="lg"
         classNames={{
@@ -146,7 +147,7 @@ export const CategorySelect: React.FC<Props> = ({
             'group-data-[focus=true]:text-primary dark:group-data-[focus=true]:text-blue-400',
             'group-data-[filled=true]:text-primary dark:group-data-[filled=true]:text-blue-400',
           ],
-          listboxWrapper: 'max-h-96',
+          listboxWrapper: 'min-h-[300px] max-h-96',
           popoverContent: 'dark:bg-gray-800',
         }}
         listboxProps={{

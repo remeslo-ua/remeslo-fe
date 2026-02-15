@@ -71,11 +71,17 @@ export async function GET(request: NextRequest) {
       color: cat.color,
       icon: cat.icon,
       iconType: cat.iconType,
+      isDefault: cat.isDefault,
       usageCount: usageMap.get(cat._id.toString()) || 0,
     }));
 
+    // Separate user-created and default categories with usage
+    const userCreatedWithUsage = categoriesWithUsage.filter((cat) => !cat.isDefault);
+    const defaultWithUsage = categoriesWithUsage.filter((cat) => cat.isDefault);
+
     // Sort by usage count descending
-    categoriesWithUsage.sort((a, b) => b.usageCount - a.usageCount);
+    userCreatedWithUsage.sort((a, b) => b.usageCount - a.usageCount);
+    defaultWithUsage.sort((a, b) => b.usageCount - a.usageCount);
 
     // Also get unused categories (default and user's custom)
     const unusedCategories = await Category.find({
@@ -94,13 +100,24 @@ export async function GET(request: NextRequest) {
       color: cat.color,
       icon: cat.icon,
       iconType: cat.iconType,
+      isDefault: cat.isDefault,
       usageCount: 0,
     }));
 
-    // Combine: most used first, then unused (alphabetically)
+    // Separate user-created and default unused categories
+    const userCreatedUnused = unusedCategoriesFormatted.filter((cat) => !cat.isDefault);
+    const defaultUnused = unusedCategoriesFormatted.filter((cat) => cat.isDefault);
+
+    // Sort unused alphabetically
+    userCreatedUnused.sort((a, b) => a.name.localeCompare(b.name));
+    defaultUnused.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Combine: user-created (with usage → unused) then defaults (with usage → unused)
     const allCategories = [
-      ...categoriesWithUsage,
-      ...unusedCategoriesFormatted.sort((a, b) => a.name.localeCompare(b.name)),
+      ...userCreatedWithUsage,
+      ...userCreatedUnused,
+      ...defaultWithUsage,
+      ...defaultUnused,
     ];
 
     return NextResponse.json(allCategories);

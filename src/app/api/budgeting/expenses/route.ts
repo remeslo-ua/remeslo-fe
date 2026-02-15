@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
 
     // Get expenses with pagination
     const expenses = await Expense.find(query)
+      .populate('category', 'name color type')
       .sort({ date: -1 })
       .limit(limit)
       .skip((page - 1) * limit);
