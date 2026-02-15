@@ -37,11 +37,22 @@ export const Login = () => {
     console.log(login, password);
     setIsLoading(true);
     try {
-      await authLogin(login, password);
+      const user = await authLogin(login, password);
       toast.success("Login successful!");
       
-      // Note: We can't access the updated user from authLogin directly,
-      // so redirect to home and let the home page handle the redirect
+      const hasOnlyOneApp = user.accessibleApps.length === 1;
+      if (hasOnlyOneApp) {
+        const firstApp = user.accessibleApps[0];
+        const appRouteMap: Record<string, string> = {
+          'marketplace': ROUTES.MARKET.HOME,
+          'budgeting': ROUTES.BUDGETING.HOME,
+          'hookah-picker': ROUTES.HOOKAH_PICKER.HOME,
+        };
+        const route = appRouteMap[firstApp] || ROUTES.HOME;
+        router.push(route);
+        return;
+      }
+
       router.push(ROUTES.HOME);
     } catch (error: any) {
       toast.error(error.message || "Login failed");

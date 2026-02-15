@@ -43,12 +43,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if this is the first user and make them admin
-    const totalUsers = await User.countDocuments();
-    if (totalUsers === 1 && user.role !== 'admin') {
-      user.role = 'admin';
-      user.accessibleApps = ['marketplace', 'hookah-picker', 'budgeting'];
-      await user.save();
-    }
+    // const totalUsers = await User.countDocuments();
+    // if (totalUsers === 1 && user.role !== 'admin') {
+    //   user.role = 'admin';
+    //   user.accessibleApps = ['marketplace', 'hookah-picker', 'budgeting'];
+    //   await user.save();
+    // }
 
     // Ensure user has accessibleApps field (for existing users)
     if (!user.accessibleApps || user.accessibleApps.length === 0) {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: '30d' }
     );
 
     // Return user and token

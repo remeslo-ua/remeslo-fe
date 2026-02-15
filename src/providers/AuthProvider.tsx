@@ -40,7 +40,7 @@ const initialState: State = {
 };
 
 const AuthContext = createContext<
-  { state: State; dispatch: Dispatch<Action>; login: (email: string, password: string) => Promise<void>; logout: () => void } | undefined
+  { state: State; dispatch: Dispatch<Action>; login: (email: string, password: string) => Promise<User>; logout: () => void } | undefined
 >(undefined);
 
 const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
@@ -146,6 +146,8 @@ const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
 
       dispatch({ type: "SET_USER", payload: data.user });
       dispatch({ type: "SET_TOKEN", payload: data.token });
+
+      return data.user;
     } catch (error) {
       throw error;
     }

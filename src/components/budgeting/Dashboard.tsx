@@ -153,10 +153,28 @@ export const Dashboard = () => {
     return t('budgeting.month', 'Month');
   };
 
+  const getDaysLeftInMonth = () => {
+    const currentDate = new Date();
+    const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+    const currentDay = currentDate.getDate();
+    return daysInMonth - currentDay;
+  };
+
   if (loading || !summary) return <div>{t('common.loading', 'Loading...')}</div>;
 
   const budgetGoal = settings.budgetGoal || 0;
   const hasBudgetGoal = settings.budgetGoal !== null && settings.budgetGoal > 0;
+  const percentBudgetUsed = hasBudgetGoal
+    ? (summary.totalExpenses / budgetGoal) * 100
+    : 0;
+
+  // Calculate days of month spent
+  const currentDate = new Date();
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+  const currentDay = currentDate.getDate();
+  const daysSpent = currentDay;
+  const daysRemaining = daysInMonth - currentDay;
+  const percentDaysSpent = (daysSpent / daysInMonth) * 100;
 
   const chartData = [
     ['Category', 'Income', 'Expenses', ...(hasBudgetGoal ? ['Budget Goal'] : [])],
@@ -197,13 +215,13 @@ export const Dashboard = () => {
   return (
     <div className="space-y-6">
       <Card>
-      <Chart
-        chartType="BarChart"
-        width="100%"
-        height="400px"
-        data={chartData}
-        options={options}
-      />
+        <Chart
+          chartType="BarChart"
+          width="100%"
+          height="400px"
+          data={chartData}
+          options={options}
+        />
       </Card>
       {categorySpending.length > 0 && (
         <Card>
@@ -229,43 +247,70 @@ export const Dashboard = () => {
           </CardBody>
         </Card>
       )}
-      {/* Budget Goal Card */}
-      {hasBudgetGoal && (
-        <Card>
-          <CardHeader>
-            <h4 className="text-lg font-semibold text-blue-600">{t('budgeting.monthlyBudgetGoal', 'Monthly Budget Goal')}</h4>
-          </CardHeader>
-          <CardBody>
-            <p className="text-2xl font-bold text-blue-600">
-              {formatCurrency(budgetGoal)}
-            </p>
-            <p className="text-sm text-gray-500">{t('budgeting.targetForThisMonth', 'Target for this month')}</p>
-            {timeRange === 'month' && (
+      {/* Monthly Overview Card */}
+      <Card>
+        <CardHeader>
+          <h4 className="text-lg font-semibold">Monthly Overview</h4>
+        </CardHeader>
+        <CardBody className="space-y-6">
+          {hasBudgetGoal && (
+            <div>
+              <h5 className="text-md font-semibold text-blue-600 mb-2">
+                {t('budgeting.monthlyBudgetGoal', 'Monthly Budget Goal')}
+              </h5>
+              <p className="text-2xl font-bold text-blue-600">
+                {formatCurrency(budgetGoal)}
+              </p>
               <p className="text-sm text-gray-500">
-                {t('budgeting.daysLeftInMonth', '{count} days left in this month').replace('{count}', getDaysLeftInMonth().toString())}
+                {t('budgeting.targetForThisMonth', 'Target for this month')}
               </p>
-            )}
-            <div className="mt-2">
-              <p className="text-sm">
-                {t('budgeting.remaining', 'Remaining')}: {formatCurrency(Math.max(budgetGoal - summary.totalExpenses, 0))}
-              </p>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                <div
-                  className={`h-2.5 rounded-full ${
-                    summary.totalExpenses > budgetGoal ? 'bg-red-600' : 'bg-blue-600'
-                  }`}
-                  style={{ width: `${Math.min((summary.totalExpenses / budgetGoal) * 100, 100)}%` }}
-                ></div>
-              </div>
-              {summary.totalExpenses > budgetGoal && (
-                <p className="text-sm text-red-600 mt-1">
-                  {t('budgeting.overBudgetBy', 'Over budget by')} {formatCurrency(summary.totalExpenses - budgetGoal)}
+              <div className="mt-2">
+                <p className="text-sm">
+                  {t('budgeting.remaining', 'Remaining')}: {formatCurrency(Math.max(budgetGoal - summary.totalExpenses, 0))}
                 </p>
-              )}
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className={`h-2.5 rounded-full ${
+                      summary.totalExpenses > budgetGoal ? 'bg-red-600' : 'bg-blue-600'
+                    }`}
+                    style={{ width: `${Math.min((summary.totalExpenses / budgetGoal) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  {Math.min(percentBudgetUsed, 100).toFixed(1)}% of budget used
+                </p>
+                {summary.totalExpenses > budgetGoal && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {t('budgeting.overBudgetBy', 'Over budget by')} {formatCurrency(summary.totalExpenses - budgetGoal)}
+                  </p>
+                )}
+              </div>
+              <hr className="my-4" />
             </div>
-          </CardBody>
-        </Card>
-      )}
+          )}
+
+          {/* Month Progress Section */}
+          <div>
+            <div className="flex justify-between items-center mb-3">
+              <div>
+                <p className="text-2xl font-bold text-purple-600">{daysSpent}/{daysInMonth}</p>
+                <p className="text-sm text-gray-500">Days of the month</p>
+              </div>
+              <div className="text-right">
+                <p className="text-lg font-semibold text-purple-600">{daysRemaining}</p>
+                <p className="text-sm text-gray-500">Days remaining</p>
+              </div>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className="h-3 rounded-full bg-gradient-to-r from-purple-500 to-purple-600"
+                style={{ width: `${percentDaysSpent}%` }}
+              ></div>
+            </div>
+            <p className="text-xs text-gray-500 mt-2 text-center">{percentDaysSpent.toFixed(1)}% of month completed</p>
+          </div>
+        </CardBody>
+      </Card>
     </div>
   );
 };
